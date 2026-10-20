@@ -1,7 +1,7 @@
 {
   "name": "miru",
-  "version": "0.3.0",
-  "description": "Fast, GPU-accelerated CBZ comic and manga reader built with GPUIX",
+  "version": "0.4.0",
+  "description": "Fast, GPU-accelerated CBZ and CBR comic reader built with GPUIX",
   "private": true,
   "type": "module",
   "scripts": {
@@ -14,6 +14,7 @@
   "dependencies": {
     "@gpuix/react": "^0.10.0",
     "adm-zip": "^0.5.16",
+    "node-unrar-js": "^2.0.2",
     "react": "^19.2.4"
   },
   "devDependencies": {

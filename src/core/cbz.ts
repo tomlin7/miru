@@ -2,6 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import os from 'os'
 import AdmZip from 'adm-zip'
+import { createExtractorFromData } from 'node-unrar-js'
 
 export interface ComicInfo {
   title?: string
@@ -96,65 +97,88 @@ export function getComicCacheDir(comicFilePath: string): string {
   return cacheDir
 }
 
-/**
- * Opens and extracts a .cbz archive
- */
-export function openCbz(comicFilePath: string): ComicBook {
-  if (!fs.existsSync(comicFilePath)) {
-    throw new Error(`Comic file not found: ${comicFilePath}`)
+export type ArchiveKind = 'zip' | 'rar'
+
+interface ArchiveFile {
+  name: string
+  data: Buffer
+}
+
+/** ZIP local/empty/spanned headers start with PK. RAR starts with Rar!. */
+export function detectArchiveKind(bytes: Uint8Array): ArchiveKind | null {
+  if (
+    bytes.length >= 4 &&
+    bytes[0] === 0x50 &&
+    bytes[1] === 0x4b &&
+    (bytes[2] === 0x03 || bytes[2] === 0x05 || bytes[2] === 0x07)
+  ) {
+    return 'zip'
   }
-
-  const zip = new AdmZip(comicFilePath)
-  const entries = zip.getEntries()
-
-  // Look for ComicInfo.xml
-  let comicInfo: ComicInfo = {}
-  const infoEntry = entries.find((e) => e.entryName.toLowerCase().endsWith('comicinfo.xml'))
-  if (infoEntry) {
-    try {
-      const xml = infoEntry.getData().toString('utf8')
-      comicInfo = parseComicInfoXml(xml)
-    } catch {
-      // ignore XML parse error
-    }
+  if (
+    bytes.length >= 7 &&
+    bytes[0] === 0x52 &&
+    bytes[1] === 0x61 &&
+    bytes[2] === 0x72 &&
+    bytes[3] === 0x21 &&
+    bytes[4] === 0x1a &&
+    bytes[5] === 0x07
+  ) {
+    return 'rar'
   }
+  return null
+}
 
-  // Filter image files
-  const imageEntries = entries
-    .filter((e) => !e.isDirectory && isImageFile(e.entryName))
-    .sort((a, b) => naturalCompare(a.entryName, b.entryName))
+function kindForFile(filePath: string, bytes: Uint8Array): ArchiveKind {
+  const sniffed = detectArchiveKind(bytes)
+  if (sniffed) return sniffed
+  const ext = path.extname(filePath).toLowerCase()
+  if (ext === '.cbz' || ext === '.zip') return 'zip'
+  if (ext === '.cbr' || ext === '.rar') return 'rar'
+  throw new Error('Open a .cbz or .cbr file.')
+}
 
-  if (imageEntries.length === 0) {
-    throw new Error('No supported image pages found in CBZ archive.')
+function readComicInfo(entries: ArchiveFile[]): ComicInfo {
+  const info = entries.find((entry) => entry.name.toLowerCase().endsWith('comicinfo.xml'))
+  if (!info) return {}
+  try {
+    return parseComicInfoXml(info.data.toString('utf8'))
+  } catch {
+    return {}
+  }
+}
+
+function comicFromEntries(
+  comicFilePath: string,
+  entries: ArchiveFile[],
+  comicInfo: ComicInfo,
+): ComicBook {
+  const images = entries
+    .filter((entry) => isImageFile(entry.name))
+    .sort((a, b) => naturalCompare(a.name, b.name))
+
+  if (images.length === 0) {
+    throw new Error('No supported image pages found in this archive.')
   }
 
   const cacheDir = getComicCacheDir(comicFilePath)
-
-  // Extract all pages to cache directory
-  const pages: ComicPage[] = imageEntries.map((entry, index) => {
-    const ext = path.extname(entry.entryName).toLowerCase() || '.jpg'
+  const pages: ComicPage[] = images.map((entry, index) => {
+    const ext = path.extname(entry.name).toLowerCase() || '.jpg'
     const cachedFileName = `page_${String(index + 1).padStart(4, '0')}${ext}`
     const cachedPath = path.join(cacheDir, cachedFileName)
-
-    // Only write if not already cached
     if (!fs.existsSync(cachedPath)) {
-      const data = entry.getData()
-      fs.writeFileSync(cachedPath, data)
+      fs.writeFileSync(cachedPath, entry.data)
     }
-
     return {
       index,
-      entryName: entry.entryName,
+      entryName: entry.name,
       cachedPath,
     }
   })
 
   const filenameWithoutExt = path.basename(comicFilePath, path.extname(comicFilePath))
-  const title = comicInfo.title || comicInfo.series || filenameWithoutExt
-
   return {
     filePath: comicFilePath,
-    title,
+    title: comicInfo.title || comicInfo.series || filenameWithoutExt,
     series: comicInfo.series,
     issue: comicInfo.number,
     summary: comicInfo.summary,
@@ -163,4 +187,65 @@ export function openCbz(comicFilePath: string): ComicBook {
     coverPath: pages[0]?.cachedPath || '',
     cacheDir,
   }
+}
+
+function readZipEntries(comicFilePath: string): ArchiveFile[] {
+  const zip = new AdmZip(comicFilePath)
+  return zip
+    .getEntries()
+    .filter((entry) => !entry.isDirectory)
+    .map((entry) => ({
+      name: entry.entryName,
+      data: entry.getData(),
+    }))
+}
+
+async function readRarEntries(bytes: Buffer): Promise<ArchiveFile[]> {
+  const copy = new Uint8Array(bytes.byteLength)
+  copy.set(bytes)
+  let extractor
+  try {
+    extractor = await createExtractorFromData({ data: copy.buffer })
+  } catch (err: any) {
+    throw new Error(err?.message || 'Could not read this .cbr archive.')
+  }
+  const extracted = extractor.extract()
+  const files: ArchiveFile[] = []
+  for (const file of extracted.files) {
+    if (file.fileHeader.flags.directory || !file.extraction) continue
+    files.push({
+      name: file.fileHeader.name,
+      data: Buffer.from(file.extraction),
+    })
+  }
+  return files
+}
+
+/**
+ * Opens and extracts a .cbz archive.
+ */
+export function openCbz(comicFilePath: string): ComicBook {
+  if (!fs.existsSync(comicFilePath)) {
+    throw new Error(`Comic file not found: ${comicFilePath}`)
+  }
+  const entries = readZipEntries(comicFilePath)
+  return comicFromEntries(comicFilePath, entries, readComicInfo(entries))
+}
+
+/**
+ * Opens a .cbz or .cbr archive. The file header wins over the extension,
+ * so a mislabeled comic still opens.
+ */
+export async function openComic(comicFilePath: string): Promise<ComicBook> {
+  if (!fs.existsSync(comicFilePath)) {
+    throw new Error(`Comic file not found: ${comicFilePath}`)
+  }
+  const bytes = fs.readFileSync(comicFilePath)
+  const kind = kindForFile(comicFilePath, new Uint8Array(bytes))
+  if (kind === 'zip') {
+    const entries = readZipEntries(comicFilePath)
+    return comicFromEntries(comicFilePath, entries, readComicInfo(entries))
+  }
+  const entries = await readRarEntries(bytes)
+  return comicFromEntries(comicFilePath, entries, readComicInfo(entries))
 }

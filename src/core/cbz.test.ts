@@ -1,6 +1,11 @@
+import fs from 'fs'
+import os from 'os'
+import path from 'path'
 import { describe, expect, it } from 'vitest'
-import { isImageFile, naturalCompare, openCbz, parseComicInfoXml } from './cbz'
+import { detectArchiveKind, isImageFile, naturalCompare, openCbz, openComic, parseComicInfoXml } from './cbz'
 import { createSampleMangaCbz } from './sample'
+
+const cbrFixture = path.join(import.meta.dir, 'fixtures', 'two-pages.cbr')
 
 describe('CBZ Engine', () => {
   it('naturalCompare sorts filenames correctly with numerical awareness', () => {
@@ -48,5 +53,42 @@ describe('CBZ Engine', () => {
     expect(comic.pages.length).toBe(6)
     expect(comic.coverPath).toBeDefined()
     expect(comic.pages[0].cachedPath).toContain('page_0001')
+  })
+
+  it('openComic reads a .cbr archive and sorts pages naturally', async () => {
+    const comic = await openComic(cbrFixture)
+    expect(comic.title).toBe('Rar Fixture')
+    expect(comic.series).toBe('Miru Fixtures')
+    expect(comic.issue).toBe('2')
+    expect(comic.pageCount).toBe(3)
+    expect(comic.pages.map((page) => page.entryName)).toEqual([
+      'page-1.png',
+      'page-2.png',
+      'page-10.png',
+    ])
+  })
+
+  it('openComic trusts the header when the extension is wrong', async () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'miru-kind-'))
+    const zipAsCbr = path.join(dir, 'mislabeled.cbr')
+    const rarAsCbz = path.join(dir, 'mislabeled.cbz')
+    fs.copyFileSync(createSampleMangaCbz(), zipAsCbr)
+    fs.copyFileSync(cbrFixture, rarAsCbz)
+
+    expect(detectArchiveKind(new Uint8Array(fs.readFileSync(zipAsCbr)))).toBe('zip')
+    expect(detectArchiveKind(new Uint8Array(fs.readFileSync(rarAsCbz)))).toBe('rar')
+
+    const fromZip = await openComic(zipAsCbr)
+    const fromRar = await openComic(rarAsCbz)
+    expect(fromZip.pageCount).toBe(6)
+    expect(fromRar.title).toBe('Rar Fixture')
+    expect(fromRar.pageCount).toBe(3)
+  })
+
+  it('openComic rejects a file that is neither zip nor rar', async () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'miru-kind-'))
+    const textFile = path.join(dir, 'notes.txt')
+    fs.writeFileSync(textFile, 'not a comic')
+    await expect(openComic(textFile)).rejects.toThrow('Open a .cbz or .cbr file.')
   })
 })

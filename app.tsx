@@ -4,7 +4,7 @@ import {
   render,
   useGpuix,
 } from '@gpuix/react'
-import { openCbz, type ComicBook } from './src/core/cbz'
+import { openComic, type ComicBook } from './src/core/cbz'
 import {
   loadHistory,
   removeHistoryItem,
@@ -94,10 +94,10 @@ export function MiruApp() {
   }, [])
 
   const handleOpenComic = useCallback(
-    (filePath: string) => {
+    async (filePath: string) => {
       try {
         setErrorMessage(null)
-        const loadedComic = openCbz(filePath)
+        const loadedComic = await openComic(filePath)
         setComic(loadedComic)
         setSettingsOpen(false)
 
@@ -125,7 +125,7 @@ export function MiruApp() {
         })
         setHistory(loadHistory())
       } catch (err: any) {
-        setErrorMessage(err?.message || 'Failed to open CBZ archive.')
+        setErrorMessage(err?.message || 'Failed to open this comic.')
       }
     },
     [applyReading]
@@ -217,7 +217,7 @@ export function MiruApp() {
         files: true,
         directories: false,
         multiple: false,
-        prompt: 'Open CBZ',
+        prompt: 'Open comic',
       })
       if (paths && paths.length > 0 && paths[0]) {
         handleOpenComic(paths[0])
