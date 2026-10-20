@@ -1,6 +1,6 @@
 import React from 'react'
 import type { ComicPage } from '../core/cbz'
-import type { FitMode, ReadingDirection, ReadingMode } from './Toolbar'
+import type { FitMode, ReadingDirection, ReadingMode } from '../core/preferences'
 import { C } from '../theme'
 
 export interface ViewerProps {
@@ -51,7 +51,7 @@ export function Viewer({
           flexGrow: 1,
           height: '100%',
           overflowY: 'scroll',
-          backgroundColor: '#0C0C0E',
+          backgroundColor: C.canvas,
           paddingTop: 16,
           paddingBottom: 40,
           overflow: 'scroll',

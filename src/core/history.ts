@@ -15,13 +15,17 @@ export interface HistoryItem {
   readingDirection: 'rtl' | 'ltr'
 }
 
-function getHistoryFilePath(): string {
-  const home = os.homedir()
-  const dir = path.join(home, '.miru')
+export function miruDir(): string {
+  const override = process.env.MIRU_HOME
+  const dir = override && override.length > 0 ? override : path.join(os.homedir(), '.miru')
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true })
   }
-  return path.join(dir, 'history.json')
+  return dir
+}
+
+function getHistoryFilePath(): string {
+  return path.join(miruDir(), 'history.json')
 }
 
 export function loadHistory(): HistoryItem[] {

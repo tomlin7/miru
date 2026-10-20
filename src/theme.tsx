@@ -3,25 +3,33 @@ import { Button } from '@gpuix/react'
 import { Icon, type IconName } from './components/Icons'
 
 export const C = {
-  canvas: '#1A1A1A',
-  sidebar: '#181818',
-  raised: '#232323',
-  composer: '#212121',
+  canvas: '#121215',
+  surface: '#18181C',
+  surfaceHighlight: '#26262D',
+  sidebar: '#141417',
+  header: '#161619',
+  raised: '#1C1C21',
+  card: '#202024',
+  cardBorder: '#E6EAF20A',
+  composer: '#1B1B20',
   overlay: '#E6EAF20D',
   overlayStrong: '#E6EAF217',
   item: '#F0F0F00F',
   border: '#E6EAF212',
   borderStrong: '#E6EAF224',
-  sidebarBorder: '#292929',
-  text: '#E2E2E2',
-  secondary: '#A3A3A3',
-  tertiary: '#7D7D7D',
-  ghost: '#575757',
+  sidebarBorder: '#232328',
+  text: '#EDEDF0',
+  secondary: '#9E9EA9',
+  tertiary: '#6E6E7A',
+  ghost: '#4A4A54',
   accent: '#E2795B',
-  accentHover: '#E88B70',
+  accentHover: '#EA876B',
+  error: '#F87171',
   inverse: '#E7E9EC',
   onInverse: '#17181C',
 }
+
+export const IS_DARWIN = typeof process !== 'undefined' && process.platform === 'darwin'
 
 export const TITLEBAR_HEIGHT = 48
 export const FONT_SANS = typeof window === 'undefined' ? 'Helvetica' : 'IBM Plex Sans'
