@@ -21,7 +21,6 @@ import {
   type ReadingMode,
   type ReadingPreferences,
 } from './src/core/preferences'
-import { createSampleMangaCbz } from './src/core/sample'
 import { Titlebar } from './src/components/Titlebar'
 import { PageRail } from './src/components/PageRail'
 import { Viewer } from './src/components/Viewer'
@@ -132,9 +131,10 @@ export function MiruApp() {
     [applyReading]
   )
 
-  const handleOpenSample = useCallback(() => {
-    const samplePath = createSampleMangaCbz()
-    handleOpenComic(samplePath)
+  // MIRU_OPEN is for the test harness only. It is not a product entry point.
+  useEffect(() => {
+    const openPath = typeof process !== 'undefined' ? process.env.MIRU_OPEN : undefined
+    if (openPath) handleOpenComic(openPath)
   }, [handleOpenComic])
 
   const rememberPage = useCallback(
@@ -410,7 +410,6 @@ export function MiruApp() {
               history={history}
               onOpenComic={handleOpenComic}
               onOpenFile={handleOpenFileDialog}
-              onOpenSample={handleOpenSample}
               onRemoveHistory={handleRemoveHistory}
             />
           )}

@@ -8,7 +8,6 @@ export interface LibraryProps {
   history: HistoryItem[]
   onOpenComic: (filePath: string) => void
   onOpenFile: () => void
-  onOpenSample: () => void
   onRemoveHistory: (filePath: string) => void
 }
 
@@ -55,7 +54,6 @@ export function Library({
   history,
   onOpenComic,
   onOpenFile,
-  onOpenSample,
   onRemoveHistory,
 }: LibraryProps) {
   return (
@@ -105,7 +103,6 @@ export function Library({
           </text>
           <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 2 }}>
             <TextAction label="Open" testId="btn-open" onClick={onOpenFile} />
-            <TextAction label="Sample" testId="btn-open-sample" onClick={onOpenSample} />
           </div>
         </div>
 

@@ -14,8 +14,7 @@ Miru is a fast, GPU-accelerated comic book and manga (.cbz) reader built with [G
   - **Western Comic (LTR - Left to Right)**: Left arrow / click left goes back, Right arrow / click right advances.
 - **Fit & Zoom**: Fit to Height, Fit to Width, Fit to Window, and zoom from 50% to 300%. These live in Settings, not on the page.
 - **Page list**: A sliding drawer of thumbnails. Open it from the titlebar or with `T`.
-- **Reading History & Library**: Automatically tracks recently read comics, last-read page, and percentage read with progress bars.
-- **Built-in Sample Manga**: Bundled with a custom 6-page manga chapter (*"Miru: Chronicles of Light"*) to explore the reader immediately.
+- **Reading History & Library**: Automatically tracks recently read comics, last-read page, and percentage read.
 - **GPUIX Window Experience**:
   - Borderless frameless window with `titlebarTransparent: true`.
   - Windows Aero Snap and modal OS window dragging via Win32 FFI.
