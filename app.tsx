@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import {
   applyMacCpuThrottleFromEnv,
   render,
@@ -6,7 +6,6 @@ import {
 } from '@gpuix/react'
 import { openCbz, type ComicBook } from './src/core/cbz'
 import {
-  clearHistory,
   loadHistory,
   removeHistoryItem,
   saveHistoryItem,
@@ -24,6 +23,7 @@ import {
 import { Viewer } from './src/components/Viewer'
 import { Thumbnails } from './src/components/Thumbnails'
 import { Library } from './src/components/Library'
+import { C } from './src/theme'
 
 export function MiruApp() {
   const { renderer } = useGpuix()
@@ -36,6 +36,9 @@ export function MiruApp() {
   const [fitMode, setFitMode] = useState<FitMode>('height')
   const [zoom, setZoom] = useState<number>(1.0)
   const [isThumbnailsOpen, setIsThumbnailsOpen] = useState<boolean>(false)
+  const [thumbnailsWidth, setThumbnailsWidth] = useState<number>(260)
+  const [resizing, setResizing] = useState<string | null>(null)
+  const resizeOrigin = useRef({ startX: 0, startWidth: 260 })
   const [history, setHistory] = useState<HistoryItem[]>([])
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
@@ -51,7 +54,6 @@ export function MiruApp() {
       const loadedComic = openCbz(filePath)
       setComic(loadedComic)
 
-      // Restore from history if available
       const hist = loadHistory()
       const existing = hist.find((h) => h.filePath === filePath)
       if (existing) {
@@ -62,7 +64,6 @@ export function MiruApp() {
         setCurrentPage(0)
       }
 
-      // Record in history
       saveHistoryItem({
         filePath,
         title: loadedComic.title,
@@ -81,13 +82,12 @@ export function MiruApp() {
     }
   }, [])
 
-  // Open sample manga
   const handleOpenSample = useCallback(() => {
     const samplePath = createSampleMangaCbz()
     handleOpenComic(samplePath)
   }, [handleOpenComic])
 
-  // Page navigation logic
+  // Page navigation
   const handleNextPage = useCallback(() => {
     if (!comic) return
     setCurrentPage((prev) => {
@@ -134,15 +134,12 @@ export function MiruApp() {
     })
   }, [comic, readingMode, readingDirection])
 
-  // Screen click zone handler
   const handlePageClick = useCallback(
     (side: 'left' | 'right') => {
       if (readingDirection === 'rtl') {
-        // Manga: Left is Next, Right is Prev
         if (side === 'left') handleNextPage()
         else handlePrevPage()
       } else {
-        // Comic: Right is Next, Left is Prev
         if (side === 'right') handleNextPage()
         else handlePrevPage()
       }
@@ -150,7 +147,6 @@ export function MiruApp() {
     [readingDirection, handleNextPage, handlePrevPage]
   )
 
-  // Direct page select
   const handleSelectPage = useCallback(
     (index: number) => {
       if (!comic) return
@@ -172,7 +168,6 @@ export function MiruApp() {
     [comic, readingMode, readingDirection]
   )
 
-  // Remove from history
   const handleRemoveHistory = useCallback((filePath: string) => {
     removeHistoryItem(filePath)
     setHistory(loadHistory())
@@ -183,7 +178,6 @@ export function MiruApp() {
     const handleKeyDown = (e: any) => {
       const key = e.key || ''
 
-      // Arrow keys navigation
       if (key === 'ArrowRight') {
         if (readingDirection === 'rtl') handlePrevPage()
         else handleNextPage()
@@ -223,7 +217,7 @@ export function MiruApp() {
     }
   }, [comic, readingDirection, handleNextPage, handlePrevPage, handleSelectPage, renderer])
 
-  // Open file dialog action
+  // Open file dialog
   const handleOpenFileDialog = async () => {
     try {
       if (!renderer?.promptForPaths) return
@@ -254,8 +248,8 @@ export function MiruApp() {
         flexDirection: 'column',
         width: '100%',
         height: '100%',
-        backgroundColor: '#0A0A0E',
-        color: '#EEEEF8',
+        backgroundColor: C.canvas,
+        color: C.text,
         overflow: 'hidden',
       }}
     >
@@ -321,8 +315,22 @@ export function MiruApp() {
               onPageClick={handlePageClick}
             />
 
+            {/* Resizable Thumbnails Drawer – per hiroshi-gpuix pattern:
+                ResizeHandle is last child inside the motion.div drawer,
+                zero-latency drag via duration: 0 when resizing */}
             <Thumbnails
               open={isThumbnailsOpen}
+              width={thumbnailsWidth}
+              isResizing={resizing === 'thumbnails'}
+              onStartResize={(e: any) => {
+                if (e.button === 0) {
+                  resizeOrigin.current = {
+                    startX: e.x ?? 0,
+                    startWidth: thumbnailsWidth,
+                  }
+                  setResizing('thumbnails')
+                }
+              }}
               pages={comic.pages}
               currentPage={currentPage}
               onSelectPage={handleSelectPage}
@@ -339,6 +347,31 @@ export function MiruApp() {
               onNextPage={handleNextPage}
               onPageChange={handleSelectPage}
               readingDirection={readingDirection}
+            />
+          )}
+
+          {/* Global Resizing Overlay – per hiroshi-gpuix pattern:
+              Full-screen transparent overlay captures mouse across the entire window */}
+          {resizing !== null && (
+            <div
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                cursor: 'col-resize',
+                backgroundColor: '#00000001',
+              }}
+              onMouseMove={(e: any) => {
+                const currentX = e.x ?? 0
+                if (resizing === 'thumbnails') {
+                  const delta = resizeOrigin.current.startX - currentX
+                  const newWidth = Math.max(200, Math.min(460, resizeOrigin.current.startWidth + delta))
+                  setThumbnailsWidth(newWidth)
+                }
+              }}
+              onMouseUp={() => setResizing(null)}
             />
           )}
         </div>
@@ -379,7 +412,7 @@ export function MiruApp() {
             justifyContent: 'center',
           }}
         >
-          <text style={{ fontSize: 13, fontWeight: '600', color: '#FFFFFF', whiteSpace: 'nowrap' }}>
+          <text style={{ fontSize: 13, fontWeight: 600, color: '#FFFFFF', whiteSpace: 'nowrap' }}>
             {errorMessage}
           </text>
         </div>

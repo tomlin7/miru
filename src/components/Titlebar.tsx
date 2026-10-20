@@ -1,6 +1,7 @@
 import React from 'react'
 import { Button, useGpuix } from '@gpuix/react'
 import { Icon } from './Icons'
+import { C, FONT_SANS, IconButton, TITLEBAR_HEIGHT } from '../theme'
 
 let user32Ffi: any = null
 
@@ -50,16 +51,16 @@ export function startWindowDrag() {
   }
 }
 
-let lastClickTime = 0
-export function handleCaptionMouseDown(renderer?: any, e?: any) {
+let lastTitlebarClick = 0
+export function handleTitlebarMouseDown(renderer?: any, e?: any) {
   if (e && e.button !== 0) return
   const now = Date.now()
-  if (now - lastClickTime < 300) {
-    lastClickTime = 0
+  if (now - lastTitlebarClick < 300) {
+    lastTitlebarClick = 0
     renderer?.zoomWindow?.()
     return
   }
-  lastClickTime = now
+  lastTitlebarClick = now
   startWindowDrag()
 }
 
@@ -89,49 +90,33 @@ export function Titlebar({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        height: 42,
-        backgroundColor: '#121216',
+        height: TITLEBAR_HEIGHT,
+        backgroundColor: C.sidebar,
         borderBottomWidth: 1,
-        borderColor: '#202028',
+        borderColor: C.sidebarBorder,
         paddingLeft: 12,
         paddingRight: 8,
+        userSelect: 'none',
         flexShrink: 0,
       }}
     >
-      {/* Left side: Logo & Library / Open action */}
+      {/* Left side: Brand badge & Library navigation */}
       <div
         style={{
           display: 'flex',
           flexDirection: 'row',
           alignItems: 'center',
-          gap: 10,
+          gap: 8,
         }}
       >
-        {isReaderActive && onBackToLibrary && (
-          <Button
+        {isReaderActive && onBackToLibrary ? (
+          <IconButton
+            icon="home"
+            testId="btn-back-library"
+            tooltip="Back to Library"
             onClick={onBackToLibrary}
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: 6,
-              height: 28,
-              paddingLeft: 8,
-              paddingRight: 10,
-              backgroundColor: '#1A1A22',
-              borderRadius: 6,
-              borderWidth: 1,
-              borderColor: '#2A2A38',
-              cursor: 'pointer',
-              hover: { backgroundColor: '#262634' },
-            }}
-          >
-            <Icon name="home" size={14} color="#A0A0B8" />
-            <text style={{ fontSize: 12, color: '#D0D0E0', whiteSpace: 'nowrap' }}>
-              {`Library`}
-            </text>
-          </Button>
-        )}
+          />
+        ) : null}
 
         <div
           style={{
@@ -143,7 +128,7 @@ export function Titlebar({
         >
           <div
             style={{
-              backgroundColor: '#FF5C00',
+              backgroundColor: C.accent,
               paddingLeft: 6,
               paddingRight: 6,
               paddingTop: 2,
@@ -154,7 +139,8 @@ export function Titlebar({
             <text
               style={{
                 fontSize: 11,
-                fontWeight: '800',
+                fontWeight: 700,
+                fontFamily: FONT_SANS,
                 color: '#FFFFFF',
                 whiteSpace: 'nowrap',
               }}
@@ -165,8 +151,9 @@ export function Titlebar({
           <text
             style={{
               fontSize: 12,
-              fontWeight: '600',
-              color: '#8E8EA8',
+              fontWeight: 500,
+              fontFamily: FONT_SANS,
+              color: C.secondary,
               whiteSpace: 'nowrap',
             }}
           >
@@ -185,16 +172,23 @@ export function Titlebar({
               height: 28,
               paddingLeft: 8,
               paddingRight: 10,
-              backgroundColor: '#181820',
+              backgroundColor: C.raised,
               borderRadius: 6,
               borderWidth: 1,
-              borderColor: '#262634',
+              borderColor: C.border,
               cursor: 'pointer',
-              hover: { backgroundColor: '#222230' },
+              hover: { backgroundColor: C.overlayStrong },
             }}
           >
-            <Icon name="folder" size={13} color="#9090A8" />
-            <text style={{ fontSize: 12, color: '#C8C8DC', whiteSpace: 'nowrap' }}>
+            <Icon name="folder" size={13} color={C.secondary} />
+            <text
+              style={{
+                fontSize: 12,
+                fontFamily: FONT_SANS,
+                color: C.text,
+                whiteSpace: 'nowrap',
+              }}
+            >
               {`Open CBZ`}
             </text>
           </Button>
@@ -211,9 +205,9 @@ export function Titlebar({
           flexGrow: 1,
           height: '100%',
           cursor: 'default',
-          gap: 12,
+          gap: 10,
         }}
-        onMouseDown={(e: any) => handleCaptionMouseDown(renderer, e)}
+        onMouseDown={(e: any) => handleTitlebarMouseDown(renderer, e)}
       >
         {title ? (
           <div
@@ -227,8 +221,9 @@ export function Titlebar({
             <text
               style={{
                 fontSize: 13,
-                fontWeight: '600',
-                color: '#EEEEF8',
+                fontWeight: 600,
+                fontFamily: FONT_SANS,
+                color: C.text,
                 whiteSpace: 'nowrap',
               }}
             >
@@ -238,7 +233,8 @@ export function Titlebar({
               <text
                 style={{
                   fontSize: 12,
-                  color: '#7E7E98',
+                  fontFamily: FONT_SANS,
+                  color: C.tertiary,
                   whiteSpace: 'nowrap',
                 }}
               >
@@ -248,21 +244,22 @@ export function Titlebar({
             {pageProgress && (
               <div
                 style={{
-                  backgroundColor: '#20202E',
-                  paddingLeft: 7,
-                  paddingRight: 7,
-                  paddingTop: 1,
-                  paddingBottom: 1,
+                  backgroundColor: C.overlay,
+                  paddingLeft: 8,
+                  paddingRight: 8,
+                  paddingTop: 2,
+                  paddingBottom: 2,
                   borderRadius: 10,
                   borderWidth: 1,
-                  borderColor: '#2E2E42',
+                  borderColor: C.border,
                 }}
               >
                 <text
                   style={{
                     fontSize: 11,
-                    fontWeight: '500',
-                    color: '#FF9E66',
+                    fontWeight: 500,
+                    fontFamily: FONT_SANS,
+                    color: C.accent,
                     whiteSpace: 'nowrap',
                   }}
                 >
@@ -275,7 +272,8 @@ export function Titlebar({
           <text
             style={{
               fontSize: 12,
-              color: '#6E6E88',
+              fontFamily: FONT_SANS,
+              color: C.tertiary,
               whiteSpace: 'nowrap',
             }}
           >
@@ -284,7 +282,7 @@ export function Titlebar({
         )}
       </div>
 
-      {/* Right side: Native Window Controls */}
+      {/* Right side: Native Window Controls matching Hiroshi chrome */}
       <div
         style={{
           display: 'flex',
@@ -302,12 +300,13 @@ export function Titlebar({
             alignItems: 'center',
             justifyContent: 'center',
             backgroundColor: 'transparent',
-            borderRadius: 4,
+            borderRadius: 5,
             cursor: 'pointer',
-            hover: { backgroundColor: '#22222E' },
+            hover: { backgroundColor: C.overlay },
+            active: { backgroundColor: C.overlayStrong },
           }}
         >
-          <Icon name="windowMinimize" size={12} color="#A0A0B8" />
+          <Icon name="windowMinimize" size={12} color={C.secondary} />
         </Button>
 
         <Button
@@ -319,15 +318,17 @@ export function Titlebar({
             alignItems: 'center',
             justifyContent: 'center',
             backgroundColor: 'transparent',
-            borderRadius: 4,
+            borderRadius: 5,
             cursor: 'pointer',
-            hover: { backgroundColor: '#22222E' },
+            hover: { backgroundColor: C.overlay },
+            active: { backgroundColor: C.overlayStrong },
           }}
         >
-          <Icon name="windowMaximize" size={11} color="#A0A0B8" />
+          <Icon name="windowMaximize" size={11} color={C.secondary} />
         </Button>
 
         <Button
+          testId="window-close"
           onClick={() => {
             if (typeof process !== 'undefined') {
               process.exit(0)
@@ -340,12 +341,13 @@ export function Titlebar({
             alignItems: 'center',
             justifyContent: 'center',
             backgroundColor: 'transparent',
-            borderRadius: 4,
+            borderRadius: 5,
             cursor: 'pointer',
-            hover: { backgroundColor: '#C53030' },
+            hover: { backgroundColor: '#582E33' },
+            active: { backgroundColor: '#752B33' },
           }}
         >
-          <Icon name="windowClose" size={12} color="#A0A0B8" />
+          <Icon name="windowClose" size={12} color={C.secondary} />
         </Button>
       </div>
     </div>

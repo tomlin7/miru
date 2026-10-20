@@ -2,9 +2,13 @@ import React from 'react'
 import { motion, Button } from '@gpuix/react'
 import type { ComicPage } from '../core/cbz'
 import { Icon } from './Icons'
+import { C, FONT_SANS, IconButton, ResizeHandle } from '../theme'
 
 export interface ThumbnailsProps {
   open: boolean
+  width: number
+  isResizing: boolean
+  onStartResize: (e: any) => void
   pages: ComicPage[]
   currentPage: number
   onSelectPage: (index: number) => void
@@ -13,6 +17,9 @@ export interface ThumbnailsProps {
 
 export function Thumbnails({
   open,
+  width,
+  isResizing,
+  onStartResize,
   pages,
   currentPage,
   onSelectPage,
@@ -21,17 +28,18 @@ export function Thumbnails({
   return (
     <motion.div
       initial={false}
-      animate={{ width: open ? 260 : 0 }}
-      transition={{ duration: 0.2, ease: 'easeOut' }}
+      animate={{ width: open ? width : 0 }}
+      transition={{ duration: isResizing ? 0 : 0.2, ease: 'easeOut' }}
       style={{
-        height: '100%',
-        backgroundColor: '#14141A',
-        borderLeftWidth: open ? 1 : 0,
-        borderColor: '#242432',
         display: 'flex',
         flexDirection: 'column',
-        overflow: 'hidden',
+        height: '100%',
+        backgroundColor: C.sidebar,
+        borderLeftWidth: open ? 1 : 0,
+        borderColor: C.sidebarBorder,
         flexShrink: 0,
+        overflow: 'hidden',
+        position: 'relative',
       }}
     >
       {/* Header */}
@@ -42,36 +50,34 @@ export function Thumbnails({
           alignItems: 'center',
           justifyContent: 'space-between',
           paddingLeft: 14,
-          paddingRight: 12,
-          height: 40,
+          paddingRight: 10,
+          height: 42,
           borderBottomWidth: 1,
-          borderColor: '#222230',
+          borderColor: C.sidebarBorder,
           flexShrink: 0,
         }}
       >
         <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-          <Icon name="thumbnails" size={14} color="#FF5C00" />
-          <text style={{ fontSize: 13, fontWeight: '700', color: '#EEEEF8', whiteSpace: 'nowrap' }}>
+          <Icon name="thumbnails" size={14} color={C.accent} />
+          <text
+            style={{
+              fontSize: 13,
+              fontWeight: 600,
+              fontFamily: FONT_SANS,
+              color: C.text,
+              whiteSpace: 'nowrap',
+            }}
+          >
             {`Pages (${pages.length})`}
           </text>
         </div>
 
-        <Button
+        <IconButton
+          icon="windowClose"
+          size={11}
+          tooltip="Close Thumbnails"
           onClick={onClose}
-          style={{
-            width: 24,
-            height: 24,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: 'transparent',
-            borderRadius: 4,
-            cursor: 'pointer',
-            hover: { backgroundColor: '#262638' },
-          }}
-        >
-          <Icon name="windowClose" size={12} color="#A0A0B8" />
-        </Button>
+        />
       </div>
 
       {/* Pages List */}
@@ -85,7 +91,7 @@ export function Thumbnails({
           paddingBottom: 10,
           paddingLeft: 10,
           paddingRight: 10,
-          gap: 10,
+          gap: 8,
         }}
       >
         {pages.map((page) => {
@@ -102,21 +108,21 @@ export function Thumbnails({
                 paddingTop: 6,
                 paddingBottom: 6,
                 paddingLeft: 6,
-                paddingRight: 6,
-                backgroundColor: isSelected ? '#252028' : '#1A1A22',
+                paddingRight: 8,
+                backgroundColor: isSelected ? C.overlayStrong : C.raised,
                 borderRadius: 8,
-                borderWidth: isSelected ? 2 : 1,
-                borderColor: isSelected ? '#FF5C00' : '#282838',
+                borderWidth: 1,
+                borderColor: isSelected ? C.accent : C.border,
                 cursor: 'pointer',
-                hover: { backgroundColor: isSelected ? '#2A2030' : '#22222E' },
+                hover: { backgroundColor: isSelected ? C.overlayStrong : C.overlay },
               }}
             >
               {/* Thumbnail image */}
               <div
                 style={{
-                  width: 54,
-                  height: 76,
-                  backgroundColor: '#0F0F14',
+                  width: 52,
+                  height: 72,
+                  backgroundColor: C.canvas,
                   borderRadius: 4,
                   overflow: 'hidden',
                   display: 'flex',
@@ -143,7 +149,7 @@ export function Thumbnails({
               >
                 <div
                   style={{
-                    backgroundColor: isSelected ? '#FF5C00' : '#2A2A3C',
+                    backgroundColor: isSelected ? C.accent : C.overlay,
                     paddingLeft: 6,
                     paddingRight: 6,
                     paddingTop: 2,
@@ -155,8 +161,9 @@ export function Thumbnails({
                   <text
                     style={{
                       fontSize: 11,
-                      fontWeight: '700',
-                      color: isSelected ? '#FFFFFF' : '#C0C0D4',
+                      fontWeight: 600,
+                      fontFamily: FONT_SANS,
+                      color: isSelected ? '#FFFFFF' : C.secondary,
                       whiteSpace: 'nowrap',
                     }}
                   >
@@ -166,7 +173,8 @@ export function Thumbnails({
                 <text
                   style={{
                     fontSize: 10,
-                    color: '#707088',
+                    fontFamily: FONT_SANS,
+                    color: C.tertiary,
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
                     whiteSpace: 'nowrap',
@@ -179,6 +187,14 @@ export function Thumbnails({
           )
         })}
       </div>
+
+      {/* Resize Handle placed as LAST child per hiroshi-gpuix invariant */}
+      <ResizeHandle
+        testId="resize-handle-thumbnails"
+        side="right"
+        isResizing={isResizing}
+        onMouseDown={onStartResize}
+      />
     </motion.div>
   )
 }

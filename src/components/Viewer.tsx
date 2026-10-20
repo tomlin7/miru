@@ -1,6 +1,7 @@
 import React from 'react'
 import type { ComicPage } from '../core/cbz'
 import type { FitMode, ReadingDirection, ReadingMode } from './Toolbar'
+import { C } from '../theme'
 
 export interface ViewerProps {
   pages: ComicPage[]
@@ -29,10 +30,10 @@ export function Viewer({
           flexGrow: 1,
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: '#0A0A0E',
+          backgroundColor: C.canvas,
         }}
       >
-        <text style={{ fontSize: 14, color: '#666680', whiteSpace: 'nowrap' }}>
+        <text style={{ fontSize: 14, color: C.ghost, whiteSpace: 'nowrap' }}>
           {`No comic pages loaded.`}
         </text>
       </div>
@@ -50,9 +51,10 @@ export function Viewer({
           flexGrow: 1,
           height: '100%',
           overflowY: 'scroll',
-          backgroundColor: '#08080C',
+          backgroundColor: '#0C0C0E',
           paddingTop: 16,
           paddingBottom: 40,
+          overflow: 'scroll',
         }}
       >
         {pages.map((page) => (
@@ -82,7 +84,6 @@ export function Viewer({
 
   // 2. Two-Page Spread Mode
   if (readingMode === 'double') {
-    // If page 0 is cover, display solo cover
     const isCoverSolo = currentPage === 0
     let leftPageIndex: number | null = null
     let rightPageIndex: number | null = null
@@ -90,8 +91,6 @@ export function Viewer({
     if (isCoverSolo) {
       rightPageIndex = 0
     } else {
-      // In RTL (Manga): Page N is on Right, Page N+1 is on Left
-      // In LTR (Comic): Page N is on Left, Page N+1 is on Right
       if (readingDirection === 'rtl') {
         rightPageIndex = currentPage
         leftPageIndex = currentPage + 1 < pages.length ? currentPage + 1 : null
@@ -113,38 +112,12 @@ export function Viewer({
           justifyContent: 'center',
           flexGrow: 1,
           height: '100%',
-          backgroundColor: '#0A0A0E',
+          backgroundColor: C.canvas,
           overflow: 'hidden',
           position: 'relative',
         }}
       >
-        {/* Left Click Zone */}
-        <div
-          style={{
-            position: 'absolute',
-            left: 0,
-            top: 0,
-            width: '25%',
-            height: '100%',
-            cursor: 'pointer',
-          }}
-          onClick={() => onPageClick('left')}
-        />
-
-        {/* Right Click Zone */}
-        <div
-          style={{
-            position: 'absolute',
-            right: 0,
-            top: 0,
-            width: '25%',
-            height: '100%',
-            cursor: 'pointer',
-          }}
-          onClick={() => onPageClick('right')}
-        />
-
-        {/* Spread Container */}
+        {/* Spread Container – rendered first so click zones paint on top (no zIndex in GPUIX) */}
         <div
           style={{
             display: 'flex',
@@ -212,6 +185,34 @@ export function Viewer({
             </div>
           )}
         </div>
+
+        {/* Left Click Zone – rendered AFTER content so it stacks on top (GPUIX: no zIndex, DOM order = stacking) */}
+        <div
+          style={{
+            position: 'absolute',
+            left: 0,
+            top: 0,
+            width: '25%',
+            height: '100%',
+            cursor: 'pointer',
+            backgroundColor: '#00000001',
+          }}
+          onClick={() => onPageClick('left')}
+        />
+
+        {/* Right Click Zone */}
+        <div
+          style={{
+            position: 'absolute',
+            right: 0,
+            top: 0,
+            width: '25%',
+            height: '100%',
+            cursor: 'pointer',
+            backgroundColor: '#00000001',
+          }}
+          onClick={() => onPageClick('right')}
+        />
       </div>
     )
   }
@@ -228,38 +229,12 @@ export function Viewer({
         justifyContent: 'center',
         flexGrow: 1,
         height: '100%',
-        backgroundColor: '#0A0A0E',
+        backgroundColor: C.canvas,
         overflow: 'hidden',
         position: 'relative',
       }}
     >
-      {/* Left Click Zone */}
-      <div
-        style={{
-          position: 'absolute',
-          left: 0,
-          top: 0,
-          width: '30%',
-          height: '100%',
-          cursor: 'pointer',
-        }}
-        onClick={() => onPageClick('left')}
-      />
-
-      {/* Right Click Zone */}
-      <div
-        style={{
-          position: 'absolute',
-          right: 0,
-          top: 0,
-          width: '30%',
-          height: '100%',
-          cursor: 'pointer',
-        }}
-        onClick={() => onPageClick('right')}
-      />
-
-      {/* Page Image Container */}
+      {/* Page Image Container – rendered first so click zones stack on top */}
       <div
         style={{
           display: 'flex',
@@ -286,6 +261,34 @@ export function Viewer({
           }}
         />
       </div>
+
+      {/* Left Click Zone – rendered AFTER content for proper stacking */}
+      <div
+        style={{
+          position: 'absolute',
+          left: 0,
+          top: 0,
+          width: '30%',
+          height: '100%',
+          cursor: 'pointer',
+          backgroundColor: '#00000001',
+        }}
+        onClick={() => onPageClick('left')}
+      />
+
+      {/* Right Click Zone */}
+      <div
+        style={{
+          position: 'absolute',
+          right: 0,
+          top: 0,
+          width: '30%',
+          height: '100%',
+          cursor: 'pointer',
+          backgroundColor: '#00000001',
+        }}
+        onClick={() => onPageClick('right')}
+      />
     </div>
   )
 }

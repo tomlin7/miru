@@ -2,6 +2,7 @@ import React from 'react'
 import { Button, useGpuix } from '@gpuix/react'
 import type { HistoryItem } from '../core/history'
 import { Icon } from './Icons'
+import { C, FONT_SANS, IconButton } from '../theme'
 
 export interface LibraryProps {
   history: HistoryItem[]
@@ -45,7 +46,7 @@ export function Library({
         flexGrow: 1,
         height: '100%',
         overflowY: 'scroll',
-        backgroundColor: '#0E0E12',
+        backgroundColor: C.canvas,
         paddingLeft: 32,
         paddingRight: 32,
         paddingTop: 36,
@@ -60,10 +61,10 @@ export function Library({
           alignItems: 'center',
           width: '100%',
           maxWidth: 820,
-          backgroundColor: '#15151E',
-          borderRadius: 16,
+          backgroundColor: C.raised,
+          borderRadius: 14,
           borderWidth: 1,
-          borderColor: '#242434',
+          borderColor: C.borderStrong,
           paddingTop: 36,
           paddingBottom: 36,
           paddingLeft: 36,
@@ -71,9 +72,9 @@ export function Library({
           boxShadow: {
             offsetX: 0,
             offsetY: 8,
-            blurRadius: 32,
+            blurRadius: 24,
             spreadRadius: 0,
-            color: '#00000066',
+            color: '#00000040',
           },
         }}
       >
@@ -89,18 +90,19 @@ export function Library({
         >
           <div
             style={{
-              backgroundColor: '#FF5C00',
+              backgroundColor: C.accent,
               paddingLeft: 12,
               paddingRight: 12,
               paddingTop: 4,
               paddingBottom: 4,
-              borderRadius: 8,
+              borderRadius: 7,
             }}
           >
             <text
               style={{
                 fontSize: 22,
-                fontWeight: '900',
+                fontWeight: 800,
+                fontFamily: FONT_SANS,
                 color: '#FFFFFF',
                 whiteSpace: 'nowrap',
               }}
@@ -111,8 +113,9 @@ export function Library({
           <text
             style={{
               fontSize: 24,
-              fontWeight: '700',
-              color: '#EEEEF8',
+              fontWeight: 700,
+              fontFamily: FONT_SANS,
+              color: C.text,
               whiteSpace: 'nowrap',
             }}
           >
@@ -123,7 +126,8 @@ export function Library({
         <text
           style={{
             fontSize: 14,
-            color: '#8E8EA8',
+            fontFamily: FONT_SANS,
+            color: C.secondary,
             marginBottom: 28,
             whiteSpace: 'nowrap',
           }}
@@ -137,7 +141,7 @@ export function Library({
             display: 'flex',
             flexDirection: 'row',
             alignItems: 'center',
-            gap: 16,
+            gap: 14,
           }}
         >
           <Button
@@ -147,20 +151,21 @@ export function Library({
               flexDirection: 'row',
               alignItems: 'center',
               gap: 8,
-              height: 40,
-              paddingLeft: 20,
-              paddingRight: 20,
-              backgroundColor: '#FF5C00',
-              borderRadius: 8,
+              height: 38,
+              paddingLeft: 18,
+              paddingRight: 18,
+              backgroundColor: C.accent,
+              borderRadius: 7,
               cursor: 'pointer',
-              hover: { backgroundColor: '#FF701E' },
+              hover: { backgroundColor: C.accentHover },
             }}
           >
-            <Icon name="folder" size={16} color="#FFFFFF" />
+            <Icon name="folder" size={15} color="#FFFFFF" />
             <text
               style={{
-                fontSize: 14,
-                fontWeight: '700',
+                fontSize: 13,
+                fontWeight: 600,
+                fontFamily: FONT_SANS,
                 color: '#FFFFFF',
                 whiteSpace: 'nowrap',
               }}
@@ -177,23 +182,24 @@ export function Library({
               flexDirection: 'row',
               alignItems: 'center',
               gap: 8,
-              height: 40,
-              paddingLeft: 18,
-              paddingRight: 18,
-              backgroundColor: '#20202E',
-              borderRadius: 8,
+              height: 38,
+              paddingLeft: 16,
+              paddingRight: 16,
+              backgroundColor: C.sidebar,
+              borderRadius: 7,
               borderWidth: 1,
-              borderColor: '#323246',
+              borderColor: C.borderStrong,
               cursor: 'pointer',
-              hover: { backgroundColor: '#2B2B3E' },
+              hover: { backgroundColor: C.overlayStrong },
             }}
           >
-            <Icon name="sparkle" size={15} color="#FF9E66" />
+            <Icon name="sparkle" size={14} color={C.accent} />
             <text
               style={{
-                fontSize: 14,
-                fontWeight: '600',
-                color: '#EEEEF8',
+                fontSize: 13,
+                fontWeight: 600,
+                fontFamily: FONT_SANS,
+                color: C.text,
                 whiteSpace: 'nowrap',
               }}
             >
@@ -219,16 +225,17 @@ export function Library({
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'space-between',
-            marginBottom: 14,
+            marginBottom: 12,
           }}
         >
           <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-            <Icon name="history" size={16} color="#FF9E66" />
+            <Icon name="history" size={15} color={C.accent} />
             <text
               style={{
-                fontSize: 16,
-                fontWeight: '700',
-                color: '#EEEEF8',
+                fontSize: 15,
+                fontWeight: 600,
+                fontFamily: FONT_SANS,
+                color: C.text,
                 whiteSpace: 'nowrap',
               }}
             >
@@ -238,7 +245,8 @@ export function Library({
           <text
             style={{
               fontSize: 12,
-              color: '#707088',
+              fontFamily: FONT_SANS,
+              color: C.tertiary,
               whiteSpace: 'nowrap',
             }}
           >
@@ -257,17 +265,18 @@ export function Library({
               paddingBottom: 40,
               paddingLeft: 20,
               paddingRight: 20,
-              backgroundColor: '#13131A',
+              backgroundColor: C.raised,
               borderRadius: 12,
               borderWidth: 1,
-              borderColor: '#262638',
+              borderColor: C.border,
             }}
           >
-            <Icon name="singlePage" size={32} color="#444458" />
+            <Icon name="singlePage" size={32} color={C.ghost} />
             <text
               style={{
-                fontSize: 14,
-                color: '#707088',
+                fontSize: 13,
+                fontFamily: FONT_SANS,
+                color: C.tertiary,
                 marginTop: 10,
                 whiteSpace: 'nowrap',
               }}
@@ -280,7 +289,7 @@ export function Library({
             style={{
               display: 'flex',
               flexDirection: 'column',
-              gap: 10,
+              gap: 8,
             }}
           >
             {history.map((item) => {
@@ -294,14 +303,14 @@ export function Library({
                     flexDirection: 'row',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    paddingTop: 12,
-                    paddingBottom: 12,
+                    paddingTop: 10,
+                    paddingBottom: 10,
                     paddingLeft: 12,
                     paddingRight: 12,
-                    backgroundColor: '#15151E',
-                    borderRadius: 10,
+                    backgroundColor: C.raised,
+                    borderRadius: 9,
                     borderWidth: 1,
-                    borderColor: '#242432',
+                    borderColor: C.border,
                   }}
                 >
                   {/* Left: Thumbnail & Details */}
@@ -310,7 +319,7 @@ export function Library({
                       display: 'flex',
                       flexDirection: 'row',
                       alignItems: 'center',
-                      gap: 14,
+                      gap: 12,
                       flexGrow: 1,
                       overflow: 'hidden',
                     }}
@@ -318,9 +327,9 @@ export function Library({
                     {item.coverPath && (
                       <div
                         style={{
-                          width: 44,
-                          height: 60,
-                          backgroundColor: '#0A0A0E',
+                          width: 42,
+                          height: 58,
+                          backgroundColor: C.canvas,
                           borderRadius: 4,
                           overflow: 'hidden',
                           flexShrink: 0,
@@ -344,9 +353,10 @@ export function Library({
                     >
                       <text
                         style={{
-                          fontSize: 14,
-                          fontWeight: '700',
-                          color: '#FFFFFF',
+                          fontSize: 13,
+                          fontWeight: 600,
+                          fontFamily: FONT_SANS,
+                          color: C.text,
                           overflow: 'hidden',
                           textOverflow: 'ellipsis',
                           whiteSpace: 'nowrap',
@@ -364,8 +374,9 @@ export function Library({
                       >
                         <text
                           style={{
-                            fontSize: 12,
-                            color: '#8E8EA8',
+                            fontSize: 11,
+                            fontFamily: FONT_SANS,
+                            color: C.tertiary,
                             whiteSpace: 'nowrap',
                           }}
                         >
@@ -373,9 +384,9 @@ export function Library({
                         </text>
                         <div
                           style={{
-                            width: 100,
+                            width: 90,
                             height: 4,
-                            backgroundColor: '#262636',
+                            backgroundColor: C.overlayStrong,
                             borderRadius: 2,
                             overflow: 'hidden',
                           }}
@@ -384,7 +395,7 @@ export function Library({
                             style={{
                               width: `${progressPct}%`,
                               height: '100%',
-                              backgroundColor: '#FF5C00',
+                              backgroundColor: C.accent,
                             }}
                           />
                         </div>
@@ -409,46 +420,37 @@ export function Library({
                         flexDirection: 'row',
                         alignItems: 'center',
                         gap: 6,
-                        height: 30,
-                        paddingLeft: 12,
-                        paddingRight: 12,
-                        backgroundColor: '#25202C',
+                        height: 28,
+                        paddingLeft: 10,
+                        paddingRight: 10,
+                        backgroundColor: C.overlay,
                         borderRadius: 6,
                         borderWidth: 1,
-                        borderColor: '#362E40',
+                        borderColor: C.borderStrong,
                         cursor: 'pointer',
-                        hover: { backgroundColor: '#342844' },
+                        hover: { backgroundColor: C.overlayStrong },
                       }}
                     >
                       <text
                         style={{
-                          fontSize: 12,
-                          fontWeight: '600',
-                          color: '#FF9E66',
+                          fontSize: 11,
+                          fontWeight: 600,
+                          fontFamily: FONT_SANS,
+                          color: C.text,
                           whiteSpace: 'nowrap',
                         }}
                       >
                         {`Resume`}
                       </text>
-                      <Icon name="arrowRight" size={13} color="#FF9E66" />
+                      <Icon name="arrowRight" size={12} color={C.secondary} />
                     </Button>
 
-                    <Button
+                    <IconButton
+                      icon="trash"
+                      size={12}
+                      tooltip="Remove from History"
                       onClick={() => onRemoveHistory(item.filePath)}
-                      style={{
-                        width: 30,
-                        height: 30,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        backgroundColor: 'transparent',
-                        borderRadius: 6,
-                        cursor: 'pointer',
-                        hover: { backgroundColor: '#2C1820' },
-                      }}
-                    >
-                      <Icon name="trash" size={13} color="#888898" />
-                    </Button>
+                    />
                   </div>
                 </div>
               )
@@ -464,20 +466,28 @@ export function Library({
           flexDirection: 'column',
           width: '100%',
           maxWidth: 820,
-          marginTop: 36,
-          backgroundColor: '#121218',
+          marginTop: 32,
+          backgroundColor: C.raised,
           borderRadius: 12,
-          paddingTop: 18,
-          paddingBottom: 18,
+          paddingTop: 16,
+          paddingBottom: 16,
           paddingLeft: 18,
           paddingRight: 18,
           borderWidth: 1,
-          borderColor: '#1F1F2C',
+          borderColor: C.border,
         }}
       >
         <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 12 }}>
-          <Icon name="info" size={14} color="#707088" />
-          <text style={{ fontSize: 13, fontWeight: '700', color: '#B0B0C4', whiteSpace: 'nowrap' }}>
+          <Icon name="info" size={13} color={C.tertiary} />
+          <text
+            style={{
+              fontSize: 12,
+              fontWeight: 600,
+              fontFamily: FONT_SANS,
+              color: C.secondary,
+              whiteSpace: 'nowrap',
+            }}
+          >
             {`Keyboard Shortcuts`}
           </text>
         </div>
@@ -487,115 +497,115 @@ export function Library({
             display: 'flex',
             flexDirection: 'row',
             flexWrap: 'wrap',
-            gap: 16,
+            gap: 14,
           }}
         >
           <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 6 }}>
             <div
               style={{
-                backgroundColor: '#1E1E2A',
+                backgroundColor: C.composer,
                 paddingTop: 2,
                 paddingBottom: 2,
                 paddingLeft: 6,
                 paddingRight: 6,
                 borderRadius: 4,
                 borderWidth: 1,
-                borderColor: '#2E2E3E',
+                borderColor: C.border,
               }}
             >
-              <text style={{ fontSize: 11, color: '#FFFFFF', whiteSpace: 'nowrap' }}>{`← / → or J / K`}</text>
+              <text style={{ fontSize: 11, fontFamily: FONT_SANS, color: C.text, whiteSpace: 'nowrap' }}>{`← / → or J / K`}</text>
             </div>
-            <text style={{ fontSize: 11, color: '#888898', whiteSpace: 'nowrap' }}>{`Turn Page`}</text>
+            <text style={{ fontSize: 11, fontFamily: FONT_SANS, color: C.tertiary, whiteSpace: 'nowrap' }}>{`Turn Page`}</text>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 6 }}>
             <div
               style={{
-                backgroundColor: '#1E1E2A',
+                backgroundColor: C.composer,
                 paddingTop: 2,
                 paddingBottom: 2,
                 paddingLeft: 6,
                 paddingRight: 6,
                 borderRadius: 4,
                 borderWidth: 1,
-                borderColor: '#2E2E3E',
+                borderColor: C.border,
               }}
             >
-              <text style={{ fontSize: 11, color: '#FFFFFF', whiteSpace: 'nowrap' }}>{`Space`}</text>
+              <text style={{ fontSize: 11, fontFamily: FONT_SANS, color: C.text, whiteSpace: 'nowrap' }}>{`Space`}</text>
             </div>
-            <text style={{ fontSize: 11, color: '#888898', whiteSpace: 'nowrap' }}>{`Next Page`}</text>
+            <text style={{ fontSize: 11, fontFamily: FONT_SANS, color: C.tertiary, whiteSpace: 'nowrap' }}>{`Next Page`}</text>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 6 }}>
             <div
               style={{
-                backgroundColor: '#1E1E2A',
+                backgroundColor: C.composer,
                 paddingTop: 2,
                 paddingBottom: 2,
                 paddingLeft: 6,
                 paddingRight: 6,
                 borderRadius: 4,
                 borderWidth: 1,
-                borderColor: '#2E2E3E',
+                borderColor: C.border,
               }}
             >
-              <text style={{ fontSize: 11, color: '#FFFFFF', whiteSpace: 'nowrap' }}>{`M`}</text>
+              <text style={{ fontSize: 11, fontFamily: FONT_SANS, color: C.text, whiteSpace: 'nowrap' }}>{`M`}</text>
             </div>
-            <text style={{ fontSize: 11, color: '#888898', whiteSpace: 'nowrap' }}>{`Switch Mode (Single / Spread / Webtoon)`}</text>
+            <text style={{ fontSize: 11, fontFamily: FONT_SANS, color: C.tertiary, whiteSpace: 'nowrap' }}>{`Switch Mode (Single / Spread / Webtoon)`}</text>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 6 }}>
             <div
               style={{
-                backgroundColor: '#1E1E2A',
+                backgroundColor: C.composer,
                 paddingTop: 2,
                 paddingBottom: 2,
                 paddingLeft: 6,
                 paddingRight: 6,
                 borderRadius: 4,
                 borderWidth: 1,
-                borderColor: '#2E2E3E',
+                borderColor: C.border,
               }}
             >
-              <text style={{ fontSize: 11, color: '#FFFFFF', whiteSpace: 'nowrap' }}>{`D`}</text>
+              <text style={{ fontSize: 11, fontFamily: FONT_SANS, color: C.text, whiteSpace: 'nowrap' }}>{`D`}</text>
             </div>
-            <text style={{ fontSize: 11, color: '#888898', whiteSpace: 'nowrap' }}>{`Toggle RTL / LTR`}</text>
+            <text style={{ fontSize: 11, fontFamily: FONT_SANS, color: C.tertiary, whiteSpace: 'nowrap' }}>{`Toggle RTL / LTR`}</text>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 6 }}>
             <div
               style={{
-                backgroundColor: '#1E1E2A',
+                backgroundColor: C.composer,
                 paddingTop: 2,
                 paddingBottom: 2,
                 paddingLeft: 6,
                 paddingRight: 6,
                 borderRadius: 4,
                 borderWidth: 1,
-                borderColor: '#2E2E3E',
+                borderColor: C.border,
               }}
             >
-              <text style={{ fontSize: 11, color: '#FFFFFF', whiteSpace: 'nowrap' }}>{`T`}</text>
+              <text style={{ fontSize: 11, fontFamily: FONT_SANS, color: C.text, whiteSpace: 'nowrap' }}>{`T`}</text>
             </div>
-            <text style={{ fontSize: 11, color: '#888898', whiteSpace: 'nowrap' }}>{`Thumbnails Drawer`}</text>
+            <text style={{ fontSize: 11, fontFamily: FONT_SANS, color: C.tertiary, whiteSpace: 'nowrap' }}>{`Thumbnails Drawer`}</text>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 6 }}>
             <div
               style={{
-                backgroundColor: '#1E1E2A',
+                backgroundColor: C.composer,
                 paddingTop: 2,
                 paddingBottom: 2,
                 paddingLeft: 6,
                 paddingRight: 6,
                 borderRadius: 4,
                 borderWidth: 1,
-                borderColor: '#2E2E3E',
+                borderColor: C.border,
               }}
             >
-              <text style={{ fontSize: 11, color: '#FFFFFF', whiteSpace: 'nowrap' }}>{`F / F11`}</text>
+              <text style={{ fontSize: 11, fontFamily: FONT_SANS, color: C.text, whiteSpace: 'nowrap' }}>{`F / F11`}</text>
             </div>
-            <text style={{ fontSize: 11, color: '#888898', whiteSpace: 'nowrap' }}>{`Fullscreen`}</text>
+            <text style={{ fontSize: 11, fontFamily: FONT_SANS, color: C.tertiary, whiteSpace: 'nowrap' }}>{`Fullscreen`}</text>
           </div>
         </div>
       </div>

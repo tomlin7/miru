@@ -1,6 +1,7 @@
 import React from 'react'
 import { Button, useGpuix } from '@gpuix/react'
 import { Icon } from './Icons'
+import { C, FONT_SANS, IconButton } from '../theme'
 
 export type ReadingMode = 'single' | 'double' | 'webtoon'
 export type ReadingDirection = 'rtl' | 'ltr'
@@ -39,11 +40,6 @@ export function Toolbar({
   onZoomReset,
   isThumbnailsOpen,
   onToggleThumbnails,
-  currentPage,
-  pageCount,
-  onPageChange,
-  onPrevPage,
-  onNextPage,
 }: ToolbarProps) {
   const { renderer } = useGpuix()
 
@@ -65,12 +61,18 @@ export function Toolbar({
           justifyContent: 'space-between',
           paddingLeft: 16,
           paddingRight: 16,
-          paddingTop: 8,
-          paddingBottom: 8,
-          backgroundColor: '#16161EEE',
+          paddingTop: 7,
+          paddingBottom: 7,
+          backgroundColor: C.composer,
           borderBottomWidth: 1,
-          borderColor: '#262636',
-          boxShadow: { offsetX: 0, offsetY: 4, blurRadius: 16, spreadRadius: 0, color: '#00000066' },
+          borderColor: C.border,
+          boxShadow: {
+            offsetX: 0,
+            offsetY: 4,
+            blurRadius: 16,
+            spreadRadius: 0,
+            color: '#0000004D',
+          },
         }}
       >
         {/* Left: Reading Mode options */}
@@ -79,15 +81,15 @@ export function Toolbar({
             display: 'flex',
             flexDirection: 'row',
             alignItems: 'center',
-            backgroundColor: '#1E1E2A',
-            borderRadius: 8,
-            paddingTop: 3,
-            paddingBottom: 3,
-            paddingLeft: 3,
-            paddingRight: 3,
+            backgroundColor: C.raised,
+            borderRadius: 7,
+            paddingTop: 2,
+            paddingBottom: 2,
+            paddingLeft: 2,
+            paddingRight: 2,
             gap: 2,
             borderWidth: 1,
-            borderColor: '#2D2D40',
+            borderColor: C.border,
           }}
         >
           <Button
@@ -98,26 +100,27 @@ export function Toolbar({
               flexDirection: 'row',
               alignItems: 'center',
               gap: 5,
-              paddingLeft: 10,
-              paddingRight: 10,
+              paddingLeft: 9,
+              paddingRight: 9,
               paddingTop: 4,
               paddingBottom: 4,
-              borderRadius: 6,
-              backgroundColor: readingMode === 'single' ? '#FF5C00' : 'transparent',
+              borderRadius: 5,
+              backgroundColor: readingMode === 'single' ? C.accent : 'transparent',
               cursor: 'pointer',
-              hover: { backgroundColor: readingMode === 'single' ? '#FF5C00' : '#2A2A3C' },
+              hover: { backgroundColor: readingMode === 'single' ? C.accent : C.overlay },
             }}
           >
             <Icon
               name="singlePage"
-              size={14}
-              color={readingMode === 'single' ? '#FFFFFF' : '#9E9EB2'}
+              size={13}
+              color={readingMode === 'single' ? '#FFFFFF' : C.secondary}
             />
             <text
               style={{
                 fontSize: 12,
-                fontWeight: readingMode === 'single' ? '700' : '500',
-                color: readingMode === 'single' ? '#FFFFFF' : '#9E9EB2',
+                fontWeight: readingMode === 'single' ? 600 : 400,
+                fontFamily: FONT_SANS,
+                color: readingMode === 'single' ? '#FFFFFF' : C.secondary,
                 whiteSpace: 'nowrap',
               }}
             >
@@ -133,26 +136,27 @@ export function Toolbar({
               flexDirection: 'row',
               alignItems: 'center',
               gap: 5,
-              paddingLeft: 10,
-              paddingRight: 10,
+              paddingLeft: 9,
+              paddingRight: 9,
               paddingTop: 4,
               paddingBottom: 4,
-              borderRadius: 6,
-              backgroundColor: readingMode === 'double' ? '#FF5C00' : 'transparent',
+              borderRadius: 5,
+              backgroundColor: readingMode === 'double' ? C.accent : 'transparent',
               cursor: 'pointer',
-              hover: { backgroundColor: readingMode === 'double' ? '#FF5C00' : '#2A2A3C' },
+              hover: { backgroundColor: readingMode === 'double' ? C.accent : C.overlay },
             }}
           >
             <Icon
               name="doublePage"
-              size={14}
-              color={readingMode === 'double' ? '#FFFFFF' : '#9E9EB2'}
+              size={13}
+              color={readingMode === 'double' ? '#FFFFFF' : C.secondary}
             />
             <text
               style={{
                 fontSize: 12,
-                fontWeight: readingMode === 'double' ? '700' : '500',
-                color: readingMode === 'double' ? '#FFFFFF' : '#9E9EB2',
+                fontWeight: readingMode === 'double' ? 600 : 400,
+                fontFamily: FONT_SANS,
+                color: readingMode === 'double' ? '#FFFFFF' : C.secondary,
                 whiteSpace: 'nowrap',
               }}
             >
@@ -168,26 +172,27 @@ export function Toolbar({
               flexDirection: 'row',
               alignItems: 'center',
               gap: 5,
-              paddingLeft: 10,
-              paddingRight: 10,
+              paddingLeft: 9,
+              paddingRight: 9,
               paddingTop: 4,
               paddingBottom: 4,
-              borderRadius: 6,
-              backgroundColor: readingMode === 'webtoon' ? '#FF5C00' : 'transparent',
+              borderRadius: 5,
+              backgroundColor: readingMode === 'webtoon' ? C.accent : 'transparent',
               cursor: 'pointer',
-              hover: { backgroundColor: readingMode === 'webtoon' ? '#FF5C00' : '#2A2A3C' },
+              hover: { backgroundColor: readingMode === 'webtoon' ? C.accent : C.overlay },
             }}
           >
             <Icon
               name="webtoon"
-              size={14}
-              color={readingMode === 'webtoon' ? '#FFFFFF' : '#9E9EB2'}
+              size={13}
+              color={readingMode === 'webtoon' ? '#FFFFFF' : C.secondary}
             />
             <text
               style={{
                 fontSize: 12,
-                fontWeight: readingMode === 'webtoon' ? '700' : '500',
-                color: readingMode === 'webtoon' ? '#FFFFFF' : '#9E9EB2',
+                fontWeight: readingMode === 'webtoon' ? 600 : 400,
+                fontFamily: FONT_SANS,
+                color: readingMode === 'webtoon' ? '#FFFFFF' : C.secondary,
                 whiteSpace: 'nowrap',
               }}
             >
@@ -202,7 +207,7 @@ export function Toolbar({
             display: 'flex',
             flexDirection: 'row',
             alignItems: 'center',
-            gap: 12,
+            gap: 10,
           }}
         >
           {/* Direction toggle */}
@@ -212,15 +217,15 @@ export function Toolbar({
                 display: 'flex',
                 flexDirection: 'row',
                 alignItems: 'center',
-                backgroundColor: '#1E1E2A',
-                borderRadius: 8,
-                paddingTop: 3,
-                paddingBottom: 3,
-                paddingLeft: 3,
-                paddingRight: 3,
+                backgroundColor: C.raised,
+                borderRadius: 7,
+                paddingTop: 2,
+                paddingBottom: 2,
+                paddingLeft: 2,
+                paddingRight: 2,
                 gap: 2,
                 borderWidth: 1,
-                borderColor: '#2D2D40',
+                borderColor: C.border,
               }}
             >
               <Button
@@ -234,22 +239,23 @@ export function Toolbar({
                   paddingRight: 8,
                   paddingTop: 4,
                   paddingBottom: 4,
-                  borderRadius: 6,
-                  backgroundColor: readingDirection === 'rtl' ? '#323246' : 'transparent',
+                  borderRadius: 5,
+                  backgroundColor: readingDirection === 'rtl' ? C.overlayStrong : 'transparent',
                   cursor: 'pointer',
-                  hover: { backgroundColor: '#3A3A52' },
+                  hover: { backgroundColor: C.overlay },
                 }}
               >
                 <Icon
                   name="directionRtl"
-                  size={14}
-                  color={readingDirection === 'rtl' ? '#FF9E66' : '#8E8EA0'}
+                  size={13}
+                  color={readingDirection === 'rtl' ? C.accent : C.tertiary}
                 />
                 <text
                   style={{
                     fontSize: 11,
-                    fontWeight: '600',
-                    color: readingDirection === 'rtl' ? '#FFFFFF' : '#8E8EA0',
+                    fontWeight: 500,
+                    fontFamily: FONT_SANS,
+                    color: readingDirection === 'rtl' ? C.text : C.tertiary,
                     whiteSpace: 'nowrap',
                   }}
                 >
@@ -268,22 +274,23 @@ export function Toolbar({
                   paddingRight: 8,
                   paddingTop: 4,
                   paddingBottom: 4,
-                  borderRadius: 6,
-                  backgroundColor: readingDirection === 'ltr' ? '#323246' : 'transparent',
+                  borderRadius: 5,
+                  backgroundColor: readingDirection === 'ltr' ? C.overlayStrong : 'transparent',
                   cursor: 'pointer',
-                  hover: { backgroundColor: '#3A3A52' },
+                  hover: { backgroundColor: C.overlay },
                 }}
               >
                 <Icon
                   name="directionLtr"
-                  size={14}
-                  color={readingDirection === 'ltr' ? '#FF9E66' : '#8E8EA0'}
+                  size={13}
+                  color={readingDirection === 'ltr' ? C.accent : C.tertiary}
                 />
                 <text
                   style={{
                     fontSize: 11,
-                    fontWeight: '600',
-                    color: readingDirection === 'ltr' ? '#FFFFFF' : '#8E8EA0',
+                    fontWeight: 500,
+                    fontFamily: FONT_SANS,
+                    color: readingDirection === 'ltr' ? C.text : C.tertiary,
                     whiteSpace: 'nowrap',
                   }}
                 >
@@ -299,85 +306,38 @@ export function Toolbar({
               display: 'flex',
               flexDirection: 'row',
               alignItems: 'center',
-              backgroundColor: '#1E1E2A',
-              borderRadius: 8,
-              paddingTop: 3,
-              paddingBottom: 3,
-              paddingLeft: 3,
-              paddingRight: 3,
+              backgroundColor: C.raised,
+              borderRadius: 7,
+              paddingTop: 2,
+              paddingBottom: 2,
+              paddingLeft: 2,
+              paddingRight: 2,
               gap: 2,
               borderWidth: 1,
-              borderColor: '#2D2D40',
+              borderColor: C.border,
             }}
           >
-            <Button
+            <IconButton
+              icon="fitHeight"
+              size={13}
+              active={fitMode === 'height'}
+              tooltip="Fit to Height"
               onClick={() => onChangeFitMode('height')}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                paddingLeft: 8,
-                paddingRight: 8,
-                paddingTop: 4,
-                paddingBottom: 4,
-                borderRadius: 6,
-                backgroundColor: fitMode === 'height' ? '#323246' : 'transparent',
-                cursor: 'pointer',
-                hover: { backgroundColor: '#3A3A52' },
-              }}
-            >
-              <Icon
-                name="fitHeight"
-                size={14}
-                color={fitMode === 'height' ? '#FF9E66' : '#8E8EA0'}
-              />
-            </Button>
-
-            <Button
+            />
+            <IconButton
+              icon="fitWidth"
+              size={13}
+              active={fitMode === 'width'}
+              tooltip="Fit to Width"
               onClick={() => onChangeFitMode('width')}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                paddingLeft: 8,
-                paddingRight: 8,
-                paddingTop: 4,
-                paddingBottom: 4,
-                borderRadius: 6,
-                backgroundColor: fitMode === 'width' ? '#323246' : 'transparent',
-                cursor: 'pointer',
-                hover: { backgroundColor: '#3A3A52' },
-              }}
-            >
-              <Icon
-                name="fitWidth"
-                size={14}
-                color={fitMode === 'width' ? '#FF9E66' : '#8E8EA0'}
-              />
-            </Button>
-
-            <Button
+            />
+            <IconButton
+              icon="fitWindow"
+              size={13}
+              active={fitMode === 'best'}
+              tooltip="Best Fit"
               onClick={() => onChangeFitMode('best')}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                paddingLeft: 8,
-                paddingRight: 8,
-                paddingTop: 4,
-                paddingBottom: 4,
-                borderRadius: 6,
-                backgroundColor: fitMode === 'best' ? '#323246' : 'transparent',
-                cursor: 'pointer',
-                hover: { backgroundColor: '#3A3A52' },
-              }}
-            >
-              <Icon
-                name="fitWindow"
-                size={14}
-                color={fitMode === 'best' ? '#FF9E66' : '#8E8EA0'}
-              />
-            </Button>
+            />
           </div>
         </div>
 
@@ -396,34 +356,18 @@ export function Toolbar({
               display: 'flex',
               flexDirection: 'row',
               alignItems: 'center',
-              backgroundColor: '#1E1E2A',
-              borderRadius: 8,
+              backgroundColor: C.raised,
+              borderRadius: 7,
               paddingTop: 2,
               paddingBottom: 2,
               paddingLeft: 2,
               paddingRight: 2,
               gap: 2,
               borderWidth: 1,
-              borderColor: '#2D2D40',
+              borderColor: C.border,
             }}
           >
-            <Button
-              onClick={onZoomOut}
-              style={{
-                width: 26,
-                height: 24,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor: 'transparent',
-                borderRadius: 4,
-                cursor: 'pointer',
-                hover: { backgroundColor: '#2E2E40' },
-              }}
-            >
-              <Icon name="zoomOut" size={13} color="#9E9EB2" />
-            </Button>
-
+            <IconButton icon="zoomOut" size={13} tooltip="Zoom Out (-)" onClick={onZoomOut} />
             <Button
               onClick={onZoomReset}
               style={{
@@ -436,30 +380,22 @@ export function Toolbar({
                 backgroundColor: 'transparent',
                 borderRadius: 4,
                 cursor: 'pointer',
-                hover: { backgroundColor: '#2E2E40' },
+                hover: { backgroundColor: C.overlay },
               }}
             >
-              <text style={{ fontSize: 11, fontWeight: '600', color: '#D0D0E2', whiteSpace: 'nowrap' }}>
+              <text
+                style={{
+                  fontSize: 11,
+                  fontWeight: 600,
+                  fontFamily: FONT_SANS,
+                  color: C.secondary,
+                  whiteSpace: 'nowrap',
+                }}
+              >
                 {`${Math.round(zoom * 100)}%`}
               </text>
             </Button>
-
-            <Button
-              onClick={onZoomIn}
-              style={{
-                width: 26,
-                height: 24,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor: 'transparent',
-                borderRadius: 4,
-                cursor: 'pointer',
-                hover: { backgroundColor: '#2E2E40' },
-              }}
-            >
-              <Icon name="zoomIn" size={13} color="#9E9EB2" />
-            </Button>
+            <IconButton icon="zoomIn" size={13} tooltip="Zoom In (+)" onClick={onZoomIn} />
           </div>
 
           {/* Thumbnails toggle */}
@@ -474,24 +410,25 @@ export function Toolbar({
               height: 28,
               paddingLeft: 10,
               paddingRight: 10,
-              backgroundColor: isThumbnailsOpen ? '#FF5C00' : '#1E1E2A',
+              backgroundColor: isThumbnailsOpen ? C.accent : C.raised,
               borderRadius: 6,
               borderWidth: 1,
-              borderColor: '#2D2D40',
+              borderColor: isThumbnailsOpen ? C.accent : C.border,
               cursor: 'pointer',
-              hover: { backgroundColor: isThumbnailsOpen ? '#FF5C00' : '#2C2C3E' },
+              hover: { backgroundColor: isThumbnailsOpen ? C.accent : C.overlayStrong },
             }}
           >
             <Icon
               name="thumbnails"
               size={13}
-              color={isThumbnailsOpen ? '#FFFFFF' : '#A0A0B8'}
+              color={isThumbnailsOpen ? '#FFFFFF' : C.secondary}
             />
             <text
               style={{
                 fontSize: 12,
-                fontWeight: '600',
-                color: isThumbnailsOpen ? '#FFFFFF' : '#D0D0E2',
+                fontWeight: 600,
+                fontFamily: FONT_SANS,
+                color: isThumbnailsOpen ? '#FFFFFF' : C.text,
                 whiteSpace: 'nowrap',
               }}
             >
@@ -500,24 +437,12 @@ export function Toolbar({
           </Button>
 
           {/* Fullscreen button */}
-          <Button
+          <IconButton
+            icon="fullscreen"
+            size={14}
+            tooltip="Toggle Fullscreen (F)"
             onClick={() => renderer?.toggleFullscreen?.()}
-            style={{
-              width: 28,
-              height: 28,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              backgroundColor: '#1E1E2A',
-              borderRadius: 6,
-              borderWidth: 1,
-              borderColor: '#2D2D40',
-              cursor: 'pointer',
-              hover: { backgroundColor: '#2C2C3E' },
-            }}
-          >
-            <Icon name="fullscreen" size={14} color="#A0A0B8" />
-          </Button>
+          />
         </div>
       </div>
     </div>
@@ -546,14 +471,19 @@ export function BottomScrubber({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        paddingLeft: 20,
-        paddingRight: 20,
-        paddingTop: 8,
-        paddingBottom: 8,
-        backgroundColor: '#14141CEE',
+        paddingLeft: 16,
+        paddingRight: 16,
+        height: 44,
+        backgroundColor: C.composer,
         borderTopWidth: 1,
-        borderColor: '#222230',
-        boxShadow: { offsetX: 0, offsetY: -4, blurRadius: 16, spreadRadius: 0, color: '#00000066' },
+        borderColor: C.border,
+        boxShadow: {
+          offsetX: 0,
+          offsetY: -4,
+          blurRadius: 16,
+          spreadRadius: 0,
+          color: '#0000004D',
+        },
         gap: 16,
       }}
     >
@@ -566,19 +496,27 @@ export function BottomScrubber({
           flexDirection: 'row',
           alignItems: 'center',
           gap: 6,
-          height: 30,
-          paddingLeft: 12,
+          height: 28,
+          paddingLeft: 10,
           paddingRight: 12,
-          backgroundColor: '#1E1E2A',
+          backgroundColor: C.raised,
           borderRadius: 6,
           borderWidth: 1,
-          borderColor: '#2C2C3C',
+          borderColor: C.border,
           cursor: 'pointer',
-          hover: { backgroundColor: '#2B2B3C' },
+          hover: { backgroundColor: C.overlayStrong },
         }}
       >
-        <Icon name="arrowLeft" size={14} color="#E0E0EE" />
-        <text style={{ fontSize: 12, fontWeight: '600', color: '#E0E0EE', whiteSpace: 'nowrap' }}>
+        <Icon name="arrowLeft" size={13} color={C.secondary} />
+        <text
+          style={{
+            fontSize: 12,
+            fontWeight: 500,
+            fontFamily: FONT_SANS,
+            color: C.text,
+            whiteSpace: 'nowrap',
+          }}
+        >
           {`Prev`}
         </text>
       </Button>
@@ -596,19 +534,18 @@ export function BottomScrubber({
         <div
           style={{
             flexGrow: 1,
-            height: 6,
-            backgroundColor: '#262636',
-            borderRadius: 3,
+            height: 4,
+            backgroundColor: C.overlayStrong,
+            borderRadius: 2,
             overflow: 'hidden',
-            position: 'relative',
           }}
         >
           <div
             style={{
               height: '100%',
               width: `${pageCount > 0 ? ((currentPage + 1) / pageCount) * 100 : 0}%`,
-              backgroundColor: '#FF5C00',
-              borderRadius: 3,
+              backgroundColor: C.accent,
+              borderRadius: 2,
             }}
           />
         </div>
@@ -616,21 +553,22 @@ export function BottomScrubber({
         {/* Current page badge */}
         <div
           style={{
-            backgroundColor: '#222230',
+            backgroundColor: C.raised,
             paddingLeft: 10,
             paddingRight: 10,
             paddingTop: 3,
             paddingBottom: 3,
-            borderRadius: 12,
+            borderRadius: 10,
             borderWidth: 1,
-            borderColor: '#303044',
+            borderColor: C.border,
           }}
         >
           <text
             style={{
-              fontSize: 12,
-              fontWeight: '700',
-              color: '#FFFFFF',
+              fontSize: 11,
+              fontWeight: 600,
+              fontFamily: FONT_SANS,
+              color: C.text,
               whiteSpace: 'nowrap',
             }}
           >
@@ -648,21 +586,29 @@ export function BottomScrubber({
           flexDirection: 'row',
           alignItems: 'center',
           gap: 6,
-          height: 30,
+          height: 28,
           paddingLeft: 12,
-          paddingRight: 12,
-          backgroundColor: '#1E1E2A',
+          paddingRight: 10,
+          backgroundColor: C.raised,
           borderRadius: 6,
           borderWidth: 1,
-          borderColor: '#2C2C3C',
+          borderColor: C.border,
           cursor: 'pointer',
-          hover: { backgroundColor: '#2B2B3C' },
+          hover: { backgroundColor: C.overlayStrong },
         }}
       >
-        <text style={{ fontSize: 12, fontWeight: '600', color: '#E0E0EE', whiteSpace: 'nowrap' }}>
+        <text
+          style={{
+            fontSize: 12,
+            fontWeight: 500,
+            fontFamily: FONT_SANS,
+            color: C.text,
+            whiteSpace: 'nowrap',
+          }}
+        >
           {`Next`}
         </text>
-        <Icon name="arrowRight" size={14} color="#E0E0EE" />
+        <Icon name="arrowRight" size={13} color={C.secondary} />
       </Button>
     </div>
   )
