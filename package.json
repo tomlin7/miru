@@ -1,0 +1,26 @@
+{
+  "name": "miru",
+  "version": "0.1.0",
+  "description": "Fast, GPU-accelerated CBZ comic and manga reader built with GPUIX",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "bun --hot app.tsx",
+    "build": "bun build --compile app.tsx --outfile dist/miru",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "screenshot": "bun screenshot.ts"
+  },
+  "dependencies": {
+    "@gpuix/react": "^0.10.0",
+    "adm-zip": "^0.5.16",
+    "react": "^19.2.4"
+  },
+  "devDependencies": {
+    "@types/adm-zip": "^0.5.7",
+    "@types/bun": "^1.2.0",
+    "@types/react": "^19.2.0",
+    "typescript": "^5.3.0",
+    "vitest": "^4.0.18"
+  }
+}
