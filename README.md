@@ -1,10 +1,10 @@
-# Miru (見る) · GPU-Accelerated CBZ Reader
+# Miru (見る) · GPU-Accelerated Comic Reader
 
-Miru is a fast, GPU-accelerated comic book and manga (.cbz) reader built with [GPUIX](https://github.com/gpuix).
+Miru is a fast, GPU-accelerated comic book and manga reader for `.cbz` and `.cbr` files, built with [GPUIX](https://github.com/gpuix).
 
 ## Features
 
-- **CBZ Archive Engine**: Reads `.cbz` archives (ZIP format) directly with natural alphanumeric sorting (`page-2` before `page-10`) and `ComicInfo.xml` metadata support.
+- **Archive engine**: Reads `.cbz` (ZIP) and `.cbr` (RAR) archives, including files whose extension does not match the contents. Pages sort naturally (`page-2` before `page-10`) and `ComicInfo.xml` is read when it is present.
 - **Reading Modes**:
   - **Single Page View**: Standard centered page reader.
   - **Two-Page Spread (Double Page)**: Authentic comic & manga spreads with smart cover offset.
