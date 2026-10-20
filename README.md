@@ -12,8 +12,8 @@ Miru is a fast, GPU-accelerated comic book and manga (.cbz) reader built with [G
 - **Reading Directions**:
   - **Manga (RTL - Right to Left)**: Right arrow / click right goes back, Left arrow / click left advances.
   - **Western Comic (LTR - Left to Right)**: Left arrow / click left goes back, Right arrow / click right advances.
-- **Fit & Zoom**: Fit to Height, Fit to Width, Fit to Window (Best Fit), and customizable zoom (50% to 300%).
-- **Interactive Thumbnails Drawer**: Sliding page grid with thumbnail previews and instant page jumps.
+- **Fit & Zoom**: Fit to Height, Fit to Width, Fit to Window, and zoom from 50% to 300%. These live in Settings, not on the page.
+- **Page list**: A sliding drawer of thumbnails. Open it from the titlebar or with `T`.
 - **Reading History & Library**: Automatically tracks recently read comics, last-read page, and percentage read with progress bars.
 - **Built-in Sample Manga**: Bundled with a custom 6-page manga chapter (*"Miru: Chronicles of Light"*) to explore the reader immediately.
 - **GPUIX Window Experience**:
@@ -51,9 +51,11 @@ bun run screenshot
 | `Space` / `Shift+Space` | Next / Previous Page |
 | `PageUp` / `PageDown` | Turn Page |
 | `Home` / `End` | First / Last Page |
-| `M` | Cycle Reading Mode (Single → Spread → Webtoon) |
-| `D` | Toggle Reading Direction (RTL / LTR) |
-| `T` | Toggle Thumbnails Drawer |
-| `F` / `F11` | Toggle Fullscreen |
-| `+` / `-` | Zoom In / Out |
-| `0` | Reset Zoom to 100% |
+| `M` | Cycle layout (Single, Spread, Webtoon) |
+| `D` | Toggle reading direction |
+| `,` | Open Settings |
+| `Esc` | Close Settings |
+| `T` | Toggle the page list |
+| `F` / `F11` | Toggle fullscreen |
+| `+` / `-` | Zoom in / out |
+| `0` | Reset zoom to 100% |

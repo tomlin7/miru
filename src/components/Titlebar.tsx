@@ -1,7 +1,7 @@
 import React from 'react'
 import { Button, useGpuix } from '@gpuix/react'
 import { Icon } from './Icons'
-import { C, FONT_SANS, IconButton, TITLEBAR_HEIGHT } from '../theme'
+import { C, FONT_SANS, IconButton, IS_DARWIN, TITLEBAR_HEIGHT } from '../theme'
 
 let user32Ffi: any = null
 
@@ -64,22 +64,101 @@ export function handleTitlebarMouseDown(renderer?: any, e?: any) {
   startWindowDrag()
 }
 
+export function WindowControls() {
+  const { renderer } = useGpuix()
+  if (IS_DARWIN) return null
+
+  return (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 6,
+        height: '100%',
+        flexShrink: 0,
+      }}
+    >
+      <Button
+        testId="window-minimize"
+        aria-label="Minimize"
+        onClick={() => renderer?.minimizeWindow?.()}
+        style={{
+          width: 28,
+          height: 28,
+          borderRadius: 14,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          cursor: 'pointer',
+          hover: { backgroundColor: C.overlay },
+          active: { backgroundColor: C.overlayStrong },
+        }}
+      >
+        <Icon name="windowMinimize" size={13} color={C.secondary} />
+      </Button>
+      <Button
+        testId="window-maximize"
+        aria-label="Maximize"
+        onClick={() => renderer?.zoomWindow?.()}
+        style={{
+          width: 28,
+          height: 28,
+          borderRadius: 14,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          cursor: 'pointer',
+          hover: { backgroundColor: C.overlay },
+          active: { backgroundColor: C.overlayStrong },
+        }}
+      >
+        <Icon name="windowMaximize" size={12} color={C.secondary} />
+      </Button>
+      <Button
+        testId="window-close"
+        aria-label="Close"
+        onClick={() => {
+          if (typeof process !== 'undefined') process.exit(0)
+        }}
+        style={{
+          width: 28,
+          height: 28,
+          borderRadius: 14,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          cursor: 'pointer',
+          hover: { backgroundColor: '#3F2427' },
+          active: { backgroundColor: '#582E33' },
+        }}
+      >
+        <Icon name="windowClose" size={12} color={C.secondary} />
+      </Button>
+    </div>
+  )
+}
+
 export interface TitlebarProps {
   title?: string
-  subtitle?: string
-  pageProgress?: string
-  onBackToLibrary?: () => void
-  onOpenClick?: () => void
-  isReaderActive?: boolean
+  issue?: string
+  showBack?: boolean
+  onBack?: () => void
+  onOpenSettings: () => void
+  showPages?: boolean
+  pagesOpen?: boolean
+  onTogglePages?: () => void
 }
 
 export function Titlebar({
   title,
-  subtitle,
-  pageProgress,
-  onBackToLibrary,
-  onOpenClick,
-  isReaderActive,
+  issue,
+  showBack,
+  onBack,
+  onOpenSettings,
+  showPages,
+  pagesOpen,
+  onTogglePages,
 }: TitlebarProps) {
   const { renderer } = useGpuix()
 
@@ -89,267 +168,97 @@ export function Titlebar({
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-between',
         height: TITLEBAR_HEIGHT,
-        backgroundColor: C.sidebar,
-        borderBottomWidth: 1,
-        borderColor: C.sidebarBorder,
-        paddingLeft: 12,
+        backgroundColor: C.header,
+        paddingLeft: IS_DARWIN ? 78 : 12,
         paddingRight: 8,
         userSelect: 'none',
         flexShrink: 0,
+        gap: 4,
       }}
     >
-      {/* Left side: Brand badge & Library navigation */}
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: 8,
-        }}
-      >
-        {isReaderActive && onBackToLibrary ? (
-          <IconButton
-            icon="home"
-            testId="btn-back-library"
-            tooltip="Back to Library"
-            onClick={onBackToLibrary}
-          />
-        ) : null}
+      {showBack && onBack ? (
+        <IconButton icon="arrowLeft" testId="btn-back-library" onClick={onBack} />
+      ) : null}
 
+      {showBack ? (
         <div
           style={{
             display: 'flex',
             flexDirection: 'row',
             alignItems: 'center',
-            gap: 6,
+            gap: 8,
+            minWidth: 0,
+            maxWidth: 460,
+            overflow: 'hidden',
           }}
         >
-          <div
-            style={{
-              backgroundColor: C.accent,
-              paddingLeft: 6,
-              paddingRight: 6,
-              paddingTop: 2,
-              paddingBottom: 2,
-              borderRadius: 4,
-            }}
-          >
-            <text
-              style={{
-                fontSize: 11,
-                fontWeight: 700,
-                fontFamily: FONT_SANS,
-                color: '#FFFFFF',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              {`MIRU`}
-            </text>
-          </div>
           <text
             style={{
-              fontSize: 12,
+              fontSize: 13,
               fontWeight: 500,
               fontFamily: FONT_SANS,
-              color: C.secondary,
+              color: C.text,
               whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
             }}
           >
-            {`見る`}
+            {title || 'Miru'}
           </text>
-        </div>
-
-        {onOpenClick && (
-          <Button
-            onClick={onOpenClick}
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: 6,
-              height: 28,
-              paddingLeft: 8,
-              paddingRight: 10,
-              backgroundColor: C.raised,
-              borderRadius: 6,
-              borderWidth: 1,
-              borderColor: C.border,
-              cursor: 'pointer',
-              hover: { backgroundColor: C.overlayStrong },
-            }}
-          >
-            <Icon name="folder" size={13} color={C.secondary} />
+          {issue ? (
             <text
               style={{
                 fontSize: 12,
                 fontFamily: FONT_SANS,
-                color: C.text,
+                color: C.tertiary,
                 whiteSpace: 'nowrap',
+                flexShrink: 0,
               }}
             >
-              {`Open CBZ`}
+              {`#${issue}`}
             </text>
-          </Button>
-        )}
-      </div>
+          ) : null}
+        </div>
+      ) : (
+        <text
+          style={{
+            fontSize: 13,
+            fontWeight: 500,
+            fontFamily: FONT_SANS,
+            color: C.text,
+            whiteSpace: 'nowrap',
+          }}
+        >
+          Miru
+        </text>
+      )}
 
-      {/* Middle: Draggable window caption & Comic title */}
       <div
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'center',
-          flexGrow: 1,
-          height: '100%',
-          cursor: 'default',
-          gap: 10,
-        }}
+        style={{ flexGrow: 1, height: '100%' }}
         onMouseDown={(e: any) => handleTitlebarMouseDown(renderer, e)}
-      >
-        {title ? (
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: 8,
-            }}
-          >
-            <text
-              style={{
-                fontSize: 13,
-                fontWeight: 600,
-                fontFamily: FONT_SANS,
-                color: C.text,
-                whiteSpace: 'nowrap',
-              }}
-            >
-              {title}
-            </text>
-            {subtitle && (
-              <text
-                style={{
-                  fontSize: 12,
-                  fontFamily: FONT_SANS,
-                  color: C.tertiary,
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                {subtitle}
-              </text>
-            )}
-            {pageProgress && (
-              <div
-                style={{
-                  backgroundColor: C.overlay,
-                  paddingLeft: 8,
-                  paddingRight: 8,
-                  paddingTop: 2,
-                  paddingBottom: 2,
-                  borderRadius: 10,
-                  borderWidth: 1,
-                  borderColor: C.border,
-                }}
-              >
-                <text
-                  style={{
-                    fontSize: 11,
-                    fontWeight: 500,
-                    fontFamily: FONT_SANS,
-                    color: C.accent,
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  {pageProgress}
-                </text>
-              </div>
-            )}
-          </div>
-        ) : (
-          <text
-            style={{
-              fontSize: 12,
-              fontFamily: FONT_SANS,
-              color: C.tertiary,
-              whiteSpace: 'nowrap',
-            }}
-          >
-            {`Miru · Manga & Comic Reader`}
-          </text>
-        )}
-      </div>
+      />
 
-      {/* Right side: Native Window Controls matching Hiroshi chrome */}
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: 2,
-        }}
-      >
-        <Button
-          onClick={() => renderer?.minimizeWindow?.()}
-          style={{
-            width: 32,
-            height: 28,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: 'transparent',
-            borderRadius: 5,
-            cursor: 'pointer',
-            hover: { backgroundColor: C.overlay },
-            active: { backgroundColor: C.overlayStrong },
-          }}
-        >
-          <Icon name="windowMinimize" size={12} color={C.secondary} />
-        </Button>
-
-        <Button
-          onClick={() => renderer?.zoomWindow?.()}
-          style={{
-            width: 32,
-            height: 28,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: 'transparent',
-            borderRadius: 5,
-            cursor: 'pointer',
-            hover: { backgroundColor: C.overlay },
-            active: { backgroundColor: C.overlayStrong },
-          }}
-        >
-          <Icon name="windowMaximize" size={11} color={C.secondary} />
-        </Button>
-
-        <Button
-          testId="window-close"
-          onClick={() => {
-            if (typeof process !== 'undefined') {
-              process.exit(0)
-            }
-          }}
-          style={{
-            width: 32,
-            height: 28,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: 'transparent',
-            borderRadius: 5,
-            cursor: 'pointer',
-            hover: { backgroundColor: '#582E33' },
-            active: { backgroundColor: '#752B33' },
-          }}
-        >
-          <Icon name="windowClose" size={12} color={C.secondary} />
-        </Button>
-      </div>
+      {showPages && onTogglePages ? (
+        <IconButton
+          icon="thumbnails"
+          testId="btn-thumbnails"
+          active={pagesOpen}
+          onClick={onTogglePages}
+        />
+      ) : null}
+      <IconButton icon="settings" testId="settings" onClick={onOpenSettings} />
+      <WindowControls />
     </div>
+  )
+}
+
+export function DragSpacer() {
+  const { renderer } = useGpuix()
+  return (
+    <div
+      style={{ flexGrow: 1, height: '100%' }}
+      onMouseDown={(e: any) => handleTitlebarMouseDown(renderer, e)}
+    />
   )
 }

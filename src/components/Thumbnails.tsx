@@ -1,7 +1,6 @@
 import React from 'react'
 import { motion, Button } from '@gpuix/react'
 import type { ComicPage } from '../core/cbz'
-import { Icon } from './Icons'
 import { C, FONT_SANS, IconButton, ResizeHandle } from '../theme'
 
 export interface ThumbnailsProps {
@@ -57,18 +56,27 @@ export function Thumbnails({
           flexShrink: 0,
         }}
       >
-        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-          <Icon name="thumbnails" size={14} color={C.accent} />
+        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 8 }}>
           <text
             style={{
               fontSize: 13,
-              fontWeight: 600,
+              fontWeight: 500,
               fontFamily: FONT_SANS,
               color: C.text,
               whiteSpace: 'nowrap',
             }}
           >
-            {`Pages (${pages.length})`}
+            Pages
+          </text>
+          <text
+            style={{
+              fontSize: 12,
+              fontFamily: FONT_SANS,
+              color: C.tertiary,
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {`${pages.length}`}
           </text>
         </div>
 
@@ -104,15 +112,16 @@ export function Thumbnails({
                 display: 'flex',
                 flexDirection: 'row',
                 alignItems: 'center',
+                alignSelf: 'flex-start',
                 gap: 10,
                 paddingTop: 6,
                 paddingBottom: 6,
                 paddingLeft: 6,
                 paddingRight: 8,
-                backgroundColor: isSelected ? C.overlayStrong : C.raised,
+                backgroundColor: isSelected ? C.surfaceHighlight : '#00000000',
                 borderRadius: 8,
                 borderWidth: 1,
-                borderColor: isSelected ? C.accent : C.border,
+                borderColor: isSelected ? C.borderStrong : '#00000000',
                 cursor: 'pointer',
                 hover: { backgroundColor: isSelected ? C.overlayStrong : C.overlay },
               }}
@@ -147,40 +156,16 @@ export function Thumbnails({
                   overflow: 'hidden',
                 }}
               >
-                <div
-                  style={{
-                    backgroundColor: isSelected ? C.accent : C.overlay,
-                    paddingLeft: 6,
-                    paddingRight: 6,
-                    paddingTop: 2,
-                    paddingBottom: 2,
-                    borderRadius: 4,
-                    alignSelf: 'flex-start',
-                  }}
-                >
-                  <text
-                    style={{
-                      fontSize: 11,
-                      fontWeight: 600,
-                      fontFamily: FONT_SANS,
-                      color: isSelected ? '#FFFFFF' : C.secondary,
-                      whiteSpace: 'nowrap',
-                    }}
-                  >
-                    {`Page ${page.index + 1}`}
-                  </text>
-                </div>
                 <text
                   style={{
-                    fontSize: 10,
+                    fontSize: 12,
+                    fontWeight: isSelected ? 500 : 400,
                     fontFamily: FONT_SANS,
-                    color: C.tertiary,
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
+                    color: isSelected ? C.text : C.secondary,
                     whiteSpace: 'nowrap',
                   }}
                 >
-                  {page.entryName}
+                  {`${page.index + 1}`}
                 </text>
               </div>
             </Button>
