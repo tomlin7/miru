@@ -1,28 +1,55 @@
 import { mkdtempSync, mkdirSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
-import { launch } from '@gpuix/react/automation'
+import { launch, type App } from '@gpuix/react/automation'
+import { createSampleMangaCbz } from './src/core/sample'
 
 const outDir = 'screenshots'
 mkdirSync(outDir, { recursive: true })
 const miruHome = mkdtempSync(path.join(tmpdir(), 'miru-shot-'))
+const samplePath = createSampleMangaCbz()
 
-console.log('[screenshot] Launching Miru...')
-const app = await launch({
+async function assertNoSampleButton(app: App) {
+  let visible = false
+  try {
+    await app.getByTestId('btn-open-sample').waitFor({ timeoutMs: 600 })
+    visible = true
+  } catch {
+    visible = false
+  }
+  if (visible) {
+    throw new Error('Sample button is still visible in the product UI')
+  }
+}
+
+console.log('[screenshot] Launching empty library...')
+const library = await launch({
   command: 'bun',
   args: ['app.tsx'],
   env: { GPUIX_BACKGROUND: '1', MIRU_HOME: miruHome },
 })
 
 try {
-  await app.getByTestId('library-container').waitFor({ timeoutMs: 15_000 })
-  await new Promise((r) => setTimeout(r, 600))
-
-  await app.screenshot({ path: path.join(outDir, '01_miru_library.png') })
+  await library.getByTestId('library-container').waitFor({ timeoutMs: 15_000 })
+  await library.getByTestId('btn-open').waitFor({ timeoutMs: 5_000 })
+  await assertNoSampleButton(library)
+  await new Promise((r) => setTimeout(r, 400))
+  await library.screenshot({ path: path.join(outDir, '01_miru_library.png') })
   console.log('[screenshot] captured screenshots/01_miru_library.png')
+} finally {
+  await library.close()
+}
 
-  await app.getByTestId('btn-open-sample').click()
+console.log('[screenshot] Launching reader with the test fixture...')
+const app = await launch({
+  command: 'bun',
+  args: ['app.tsx'],
+  env: { GPUIX_BACKGROUND: '1', MIRU_HOME: miruHome, MIRU_OPEN: samplePath },
+})
+
+try {
   await app.getByTestId('reader').waitFor({ timeoutMs: 15_000 })
+  await assertNoSampleButton(app)
   await new Promise((r) => setTimeout(r, 600))
 
   await app.screenshot({ path: path.join(outDir, '02_miru_reader_single.png') })
@@ -65,6 +92,8 @@ try {
 
   await app.getByTestId('btn-back-library').click()
   await app.getByTestId('library-container').waitFor({ timeoutMs: 10_000 })
+  await app.getByTestId('btn-open').waitFor({ timeoutMs: 5_000 })
+  await assertNoSampleButton(app)
   await new Promise((r) => setTimeout(r, 400))
   await app.screenshot({ path: path.join(outDir, '07_miru_library_recent.png') })
   console.log('[screenshot] captured screenshots/07_miru_library_recent.png')
