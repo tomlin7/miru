@@ -1,39 +1,36 @@
 # Miru website
 
-The marketing site for Miru. It is a static site: plain HTML, one
-stylesheet, one script, and the app's own screenshots. No build step, no
-dependencies.
+The marketing site for Miru: React, Tailwind v4 and
+[shadcn/ui](https://ui.shadcn.com) on the `base` (Base UI) preset, with the
+`nova` theme, which is the same stack the reference site uses.
 
 ```
 www/
-  index.html          the page
-  styles.css          tokens, layout, motion
-  app.js              reading-mode switcher, scroll entrances, clip control
-  assets/
-    app-icon.svg      the mark in the masthead and the footer
-    favicon.svg
-    miru-loop.mp4     the product clip in the hero band
-    shots/            stills of the app
+  src/
+    App.tsx              the page
+    components/          the sections
+    components/ui/       the shadcn components
+    index.css            the Tailwind theme and the site's tokens
+  public/                the icons, the stills and the product clip
+  components.json        the shadcn configuration
 ```
 
 ## Running it
 
-Any static server works:
-
 ```bash
 cd www
-python -m http.server 8137
+bun install
+bun run dev
 ```
 
-It also opens straight from the filesystem — `file://www/index.html` — since
-every path is relative.
+`bun run build` writes the site to `www/dist`.
 
 ## The product clip
 
-`miru-loop.mp4` is not a mock-up. `bun record.ts` drives the real app
+`public/miru-loop.mp4` is not a mock-up. `bun record.ts` drives the real app
 through the GPUIX automation client, captures the window at each step, and
-leaves a numbered PNG sequence in `www/assets/frames`. ffmpeg turns that
-sequence into the loop:
+leaves a numbered PNG sequence in `www/.frames`. ffmpeg turns that sequence
+into the loop:
 
 ```bash
 bun record.ts
@@ -49,4 +46,13 @@ hairline feature grid, a download block, an accordion and a quiet footer.
 
 The palette is Miru's own — the app's near-black canvas, its off-white ink
 and its terracotta accent — so the product screenshots sit on the page
-without a seam.
+without a seam. The site is dark only, because the app it shows is dark
+only.
+
+## A note on the accordion
+
+shadcn's accordion keyframes were written for Radix and do not know Base
+UI's panel height, so an open panel collapses to zero. `src/index.css`
+drives the height from the variable Base UI publishes instead. The
+component's own animation is left alone, because it is what tells Base UI
+the transition has finished.

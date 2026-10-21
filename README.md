@@ -29,8 +29,11 @@ bun --hot app.tsx
 
 ### Running Tests
 ```bash
-bun test
+bun test --timeout 30000
 ```
+
+The native tests open a real archive and paint a real window, so they need
+more than Bun's five second default on a loaded machine.
 
 ### Type Checking
 ```bash
@@ -40,6 +43,13 @@ bun run typecheck
 ### Automated Visual Screenshots
 ```bash
 bun run screenshot
+```
+
+### The Website
+```bash
+cd www
+bun install
+bun run dev
 ```
 
 ## Keyboard Shortcuts

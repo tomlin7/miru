@@ -37,7 +37,10 @@ jobs:
         run: bun run typecheck
 
       - name: Unit tests
-        run: bun test
+        # The native GPUI tests open a real archive and paint a real window,
+        # which takes longer than Bun's five second default on a loaded
+        # runner. The tests themselves wait for longer than that.
+        run: bun test --timeout 30000
 
   integration:
     name: screenshot integration
@@ -53,3 +56,23 @@ jobs:
 
       - name: Screenshot integration
         run: bun run screenshot
+
+  site:
+    name: site
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: www
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Typecheck
+        run: bun run typecheck
+
+      - name: Build
+        run: bun run build

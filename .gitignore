@@ -4,8 +4,8 @@ dist
 *.log
 
 # Intermediate frames for the website product clip. `bun record.ts` writes
-# them, and the site build turns them into www/assets/miru-loop.mp4.
-www/assets/frames
+# them, and the site build turns them into www/public/miru-loop.mp4.
+www/.frames
 
 # Scratch CI logs pulled from GitHub runs.
 .ci-logs
