@@ -1,0 +1,173 @@
+@import 'tailwindcss';
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@fontsource-variable/geist";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme inline {
+    --font-heading: var(--font-sans);
+    --font-sans: 'Geist Variable', sans-serif;
+    --color-sidebar-ring: var(--sidebar-ring);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar: var(--sidebar);
+    --color-chart-5: var(--chart-5);
+    --color-chart-4: var(--chart-4);
+    --color-chart-3: var(--chart-3);
+    --color-chart-2: var(--chart-2);
+    --color-chart-1: var(--chart-1);
+    --color-ring: var(--ring);
+    --color-input: var(--input);
+    --color-border: var(--border);
+    --color-destructive: var(--destructive);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-accent: var(--accent);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-muted: var(--muted);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-secondary: var(--secondary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-primary: var(--primary);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-popover: var(--popover);
+    --color-card-foreground: var(--card-foreground);
+    --color-card: var(--card);
+    --color-foreground: var(--foreground);
+    --color-background: var(--background);
+    /* Miru's own accent, straight out of the app theme. */
+    --color-brand: var(--brand);
+    --color-brand-foreground: var(--brand-foreground);
+    --radius-sm: calc(var(--radius) * 0.6);
+    --radius-md: calc(var(--radius) * 0.8);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) * 1.4);
+    --radius-2xl: calc(var(--radius) * 1.8);
+    --radius-3xl: calc(var(--radius) * 2.2);
+    --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+/* The site is dark only: the app it shows is dark only. These are the
+   colours the app itself paints, so the screenshots sit on the page without
+   a seam. */
+:root,
+.dark {
+    --background: #0b0b0e;
+    --foreground: #ededf0;
+    --card: #131317;
+    --card-foreground: #ededf0;
+    --popover: #131317;
+    --popover-foreground: #ededf0;
+    --primary: #ededf0;
+    --primary-foreground: #0b0b0e;
+    --secondary: #1a1a20;
+    --secondary-foreground: #ededf0;
+    --muted: #1a1a20;
+    --muted-foreground: #9e9ea9;
+    --accent: #26262d;
+    --accent-foreground: #ededf0;
+    --destructive: #f87171;
+    --border: rgb(230 234 242 / 12%);
+    --input: rgb(230 234 242 / 15%);
+    --ring: #8a8a95;
+    --brand: #e2795b;
+    --brand-foreground: #170c08;
+    --chart-1: #e2795b;
+    --chart-2: #9e9ea9;
+    --chart-3: #6e6e7a;
+    --chart-4: #4a4a54;
+    --chart-5: #26262d;
+    --radius: 0.625rem;
+    --sidebar: #131317;
+    --sidebar-foreground: #ededf0;
+    --sidebar-primary: #ededf0;
+    --sidebar-primary-foreground: #0b0b0e;
+    --sidebar-accent: #26262d;
+    --sidebar-accent-foreground: #ededf0;
+    --sidebar-border: rgb(230 234 242 / 12%);
+    --sidebar-ring: #8a8a95;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+    }
+  body {
+    @apply bg-background text-foreground;
+    }
+  html {
+    @apply font-sans;
+    }
+}
+
+@layer components {
+  /* The section label. The reference site sets these in small mono caps. */
+  .eyebrow {
+    @apply font-mono text-[13px] tracking-[0.14em] text-muted-foreground/80 uppercase;
+  }
+}
+
+@layer utilities {
+  /* The scroll entrance. Only applied when the script is there, so a page
+     without scripting still shows everything. */
+  .js .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  .js .reveal.reveal-in {
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity 0.65s cubic-bezier(0.4, 0, 0.2, 1),
+      transform 0.65s cubic-bezier(0.4, 0, 0.2, 1);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+
+  .mode-panel[data-state='active'] {
+    animation: mode-in 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  @keyframes mode-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js .reveal {
+    opacity: 1;
+    transform: none;
+  }
+
+  .mode-panel[data-state='active'] {
+    animation: none;
+  }
+}
+
+/* The active reading mode is the accent. This sits outside the Tailwind
+   layers, so it wins over the tab component's own variant rules. */
+.dark [data-slot='tabs-list'][data-variant='line'] [data-slot='tabs-trigger'][data-active] {
+  background-color: var(--brand);
+  color: var(--brand-foreground);
+  border-color: var(--brand);
+}
+
+/* The accordion keyframes in tw-animate-css were written for Radix and do
+   not know Base UI's panel height variable, so an open panel collapses to
+   zero. Base UI measures the panel and publishes it, so drive the height
+   from that instead, and leave the component's own animation alone: it is
+   what tells Base UI the transition has finished. */
+[data-slot='accordion-content'] {
+  height: 0;
+}
+
+[data-slot='accordion-content'][data-open] {
+  height: var(--accordion-panel-height);
+}

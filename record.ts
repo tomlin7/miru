@@ -2,8 +2,8 @@
  * Record a short product clip for the website.
  *
  * It drives the real app through the automation client, captures the window
- * at each step, and leaves a numbered PNG sequence in `www/assets/frames`.
- * The website build turns that sequence into a loop with ffmpeg.
+ * at each step, and leaves a numbered PNG sequence in `www/.frames`. The
+ * website build turns that sequence into a loop with ffmpeg.
  *
  *   bun record.ts
  */
@@ -15,7 +15,7 @@ import path from 'node:path'
 import { launch } from '@gpuix/react/automation'
 import { createSampleMangaCbz } from './src/core/sample'
 
-const FRAMES = path.resolve('www/assets/frames')
+const FRAMES = path.resolve('www/.frames')
 
 async function main() {
   if (existsSync(FRAMES)) rmSync(FRAMES, { recursive: true, force: true })
