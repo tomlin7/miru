@@ -37,7 +37,10 @@ jobs:
         run: bun run typecheck
 
       - name: Unit tests
-        run: bun test
+        # The native GPUI tests open a real archive and paint a real window,
+        # which takes longer than Bun's five second default on a loaded
+        # runner. The tests themselves wait for longer than that.
+        run: bun test --timeout 30000
 
   integration:
     name: screenshot integration
