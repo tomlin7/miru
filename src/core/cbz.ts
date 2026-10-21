@@ -3,6 +3,7 @@ import path from 'path'
 import os from 'os'
 import AdmZip from 'adm-zip'
 import { createExtractorFromData } from 'node-unrar-js'
+import { readImageSize } from './image-size'
 
 export interface ComicInfo {
   title?: string
@@ -168,10 +169,13 @@ function comicFromEntries(
     if (!fs.existsSync(cachedPath)) {
       fs.writeFileSync(cachedPath, entry.data)
     }
+    const size = readImageSize(cachedPath)
     return {
       index,
       entryName: entry.name,
       cachedPath,
+      width: size?.width,
+      height: size?.height,
     }
   })
 
