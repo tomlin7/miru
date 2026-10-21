@@ -18,6 +18,9 @@ import { resetTitlebarPress, setWindowDragStarter } from './src/window-drag'
 
 const describeNative = hasNativeTestRenderer ? describe : describe.skip
 
+/** macOS uses the native traffic lights, so there are no window controls. */
+const isDarwin = typeof process !== 'undefined' && process.platform === 'darwin'
+
 async function pressAt(app: any, testId: string) {
   const target = app.getByTestId(testId)
   await target.waitFor({ timeoutMs: 10_000 })
@@ -94,7 +97,7 @@ describeNative('Miru titlebar dragging', () => {
     await app.close()
   })
 
-  it('zooms the window from the maximize button', async () => {
+  it.skipIf(isDarwin)('zooms the window from the maximize button', async () => {
     const { render, renderer } = createTestRoot({ width: 1200, height: 800 })
     render(<MiruApp />)
     const app = await connectTest(renderer)
