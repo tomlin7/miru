@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Button, useGpuix } from '@gpuix/react'
 import { Icon } from './Icons'
 import { C, FONT_SANS, IconButton, IS_DARWIN, TITLEBAR_HEIGHT } from '../theme'
+import { clampZoom, type ReadingMode } from '../core/preferences'
 import {
   endWindowDrag,
   handleTitlebarMouseDown,
@@ -113,6 +114,126 @@ export function WindowControls() {
   )
 }
 
+const LAYOUTS: { mode: ReadingMode; icon: 'singlePage' | 'doublePage' | 'webtoon'; label: string }[] = [
+  { mode: 'single', icon: 'singlePage', label: 'Single page' },
+  { mode: 'double', icon: 'doublePage', label: 'Spread' },
+  { mode: 'webtoon', icon: 'webtoon', label: 'Webtoon' },
+]
+
+function ReadingActions({
+  readingMode,
+  zoom,
+  onReadingMode,
+  onZoom,
+}: {
+  readingMode: ReadingMode
+  zoom: number
+  onReadingMode: (mode: ReadingMode) => void
+  onZoom: (zoom: number) => void
+}) {
+  const zoomLabel = `${Math.round(zoom * 100)}%`
+  return (
+    <div
+      testId="reader-actions"
+      style={{
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
+        height: '100%',
+        flexShrink: 0,
+      }}
+    >
+      <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 2 }}>
+        {LAYOUTS.map((item) => (
+          <IconButton
+            key={item.mode}
+            icon={item.icon}
+            testId={`reader-mode-${item.mode}`}
+            active={readingMode === item.mode}
+            tooltip={item.label}
+            onClick={() => onReadingMode(item.mode)}
+          />
+        ))}
+      </div>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          height: 28,
+          borderRadius: 8,
+          backgroundColor: C.surfaceHighlight,
+          flexShrink: 0,
+        }}
+      >
+        <Button
+          testId="reader-zoom-out"
+          aria-label="Zoom out"
+          onClick={() => onZoom(clampZoom(zoom - 0.15))}
+          style={{
+            width: 28,
+            height: 28,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            borderRadius: 8,
+            hover: { backgroundColor: C.overlay },
+          }}
+        >
+          <Icon name="zoomOut" size={13} color={C.secondary} />
+        </Button>
+        <Button
+          testId="reader-zoom-reset"
+          aria-label="Reset zoom"
+          onClick={() => onZoom(1)}
+          style={{
+            height: 28,
+            paddingLeft: 4,
+            paddingRight: 4,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            borderRadius: 6,
+            hover: { backgroundColor: C.overlay },
+          }}
+        >
+          <text
+            style={{
+              fontSize: 12,
+              fontWeight: 500,
+              fontFamily: FONT_SANS,
+              color: C.secondary,
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {zoomLabel}
+          </text>
+        </Button>
+        <Button
+          testId="reader-zoom-in"
+          aria-label="Zoom in"
+          onClick={() => onZoom(clampZoom(zoom + 0.15))}
+          style={{
+            width: 28,
+            height: 28,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            borderRadius: 8,
+            hover: { backgroundColor: C.overlay },
+          }}
+        >
+          <Icon name="zoomIn" size={13} color={C.secondary} />
+        </Button>
+      </div>
+    </div>
+  )
+}
+
 export interface TitlebarProps {
   title?: string
   issue?: string
@@ -122,6 +243,10 @@ export interface TitlebarProps {
   showPages?: boolean
   pagesOpen?: boolean
   onTogglePages?: () => void
+  readingMode?: ReadingMode
+  zoom?: number
+  onReadingMode?: (mode: ReadingMode) => void
+  onZoom?: (zoom: number) => void
 }
 
 export function Titlebar({
@@ -133,6 +258,10 @@ export function Titlebar({
   showPages,
   pagesOpen,
   onTogglePages,
+  readingMode,
+  zoom,
+  onReadingMode,
+  onZoom,
 }: TitlebarProps) {
   return (
     <div
@@ -207,6 +336,15 @@ export function Titlebar({
         ) : null}
         <div style={{ flexGrow: 1, height: '100%' }} />
       </DragRegion>
+
+      {onReadingMode && onZoom && readingMode && typeof zoom === 'number' ? (
+        <ReadingActions
+          readingMode={readingMode}
+          zoom={zoom}
+          onReadingMode={onReadingMode}
+          onZoom={onZoom}
+        />
+      ) : null}
 
       {showPages && onTogglePages ? (
         <IconButton

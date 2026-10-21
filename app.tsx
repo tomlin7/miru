@@ -319,6 +319,12 @@ export function MiruApp() {
             showPages={comic !== null}
             pagesOpen={isThumbnailsOpen}
             onTogglePages={() => setIsThumbnailsOpen((open) => !open)}
+            readingMode={comic ? readingMode : undefined}
+            zoom={comic ? zoom : undefined}
+            onReadingMode={
+              comic ? (mode) => applyReading({ readingMode: mode }, true) : undefined
+            }
+            onZoom={comic ? (next) => applyReading({ zoom: next }, true) : undefined}
           />
 
           {comic ? (
