@@ -1,6 +1,6 @@
 {
   "name": "miru",
-  "version": "0.4.0",
+  "version": "0.4.2",
   "description": "Fast, GPU-accelerated CBZ and CBR comic reader built with GPUIX",
   "private": true,
   "type": "module",

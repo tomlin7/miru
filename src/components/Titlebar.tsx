@@ -1,71 +1,41 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Button, useGpuix } from '@gpuix/react'
 import { Icon } from './Icons'
 import { C, FONT_SANS, IconButton, IS_DARWIN, TITLEBAR_HEIGHT } from '../theme'
+import {
+  endWindowDrag,
+  handleTitlebarMouseDown,
+  isWindowMaximized,
+  toggleWindowZoom,
+  updateWindowDrag,
+} from '../window-drag'
 
-let user32Ffi: any = null
-
-function getWin32Hwnd(): any {
-  if (typeof process === 'undefined' || process.platform !== 'win32') return null
-  try {
-    if (!user32Ffi) {
-      const { dlopen, FFIType } = require('bun:ffi')
-      user32Ffi = dlopen('user32.dll', {
-        FindWindowW: {
-          args: [FFIType.ptr, FFIType.ptr],
-          returns: FFIType.ptr,
-        },
-        GetForegroundWindow: {
-          args: [],
-          returns: FFIType.ptr,
-        },
-        ReleaseCapture: {
-          args: [],
-          returns: FFIType.bool,
-        },
-        SendMessageW: {
-          args: [FFIType.ptr, FFIType.u32, FFIType.ptr, FFIType.ptr],
-          returns: FFIType.ptr,
-        },
-      })
-    }
-    const titleBuf = Buffer.from('Miru · Manga & Comic Reader\0', 'utf16le')
-    const found = user32Ffi.symbols.FindWindowW(null, titleBuf)
-    if (found) return found
-    return user32Ffi.symbols.GetForegroundWindow()
-  } catch {
-    return null
-  }
-}
-
-export function startWindowDrag() {
-  if (typeof process === 'undefined' || process.platform !== 'win32') return
-  try {
-    const hwnd = getWin32Hwnd()
-    if (hwnd && user32Ffi) {
-      user32Ffi.symbols.ReleaseCapture()
-      user32Ffi.symbols.SendMessageW(hwnd, 0x0112, 0xf012, 0)
-    }
-  } catch {
-    // ignore
-  }
-}
-
-let lastTitlebarClick = 0
-export function handleTitlebarMouseDown(renderer?: any, e?: any) {
-  if (e && e.button !== 0) return
-  const now = Date.now()
-  if (now - lastTitlebarClick < 300) {
-    lastTitlebarClick = 0
-    renderer?.zoomWindow?.()
-    return
-  }
-  lastTitlebarClick = now
-  startWindowDrag()
+export function DragRegion({
+  testId,
+  style,
+  children,
+}: {
+  testId: string
+  style?: Record<string, unknown>
+  children?: React.ReactNode
+}) {
+  const { renderer } = useGpuix()
+  return (
+    <div
+      testId={testId}
+      style={{ ...style, pointerEvents: 'auto' }}
+      onMouseDown={(e: any) => handleTitlebarMouseDown(renderer, e)}
+      onMouseMove={() => updateWindowDrag()}
+      onMouseUp={() => endWindowDrag()}
+    >
+      {children}
+    </div>
+  )
 }
 
 export function WindowControls() {
   const { renderer } = useGpuix()
+  const [maximized, setMaximized] = useState(false)
   if (IS_DARWIN) return null
 
   return (
@@ -99,8 +69,12 @@ export function WindowControls() {
       </Button>
       <Button
         testId="window-maximize"
-        aria-label="Maximize"
-        onClick={() => renderer?.zoomWindow?.()}
+        aria-label={maximized ? 'Restore' : 'Maximize'}
+        onClick={() => {
+          toggleWindowZoom(renderer)
+          setMaximized(isWindowMaximized())
+        }}
+        onMouseEnter={() => setMaximized(isWindowMaximized())}
         style={{
           width: 28,
           height: 28,
@@ -113,7 +87,7 @@ export function WindowControls() {
           active: { backgroundColor: C.overlayStrong },
         }}
       >
-        <Icon name="windowMaximize" size={12} color={C.secondary} />
+        <Icon name={maximized ? 'windowRestore' : 'windowMaximize'} size={12} color={C.secondary} />
       </Button>
       <Button
         testId="window-close"
@@ -160,8 +134,6 @@ export function Titlebar({
   pagesOpen,
   onTogglePages,
 }: TitlebarProps) {
-  const { renderer } = useGpuix()
-
   return (
     <div
       style={{
@@ -181,18 +153,19 @@ export function Titlebar({
         <IconButton icon="arrowLeft" testId="btn-back-library" onClick={onBack} />
       ) : null}
 
-      {showBack ? (
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 8,
-            minWidth: 0,
-            maxWidth: 460,
-            overflow: 'hidden',
-          }}
-        >
+      <DragRegion
+        testId="titlebar-drag-header"
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: 8,
+          flexGrow: 1,
+          height: '100%',
+          minWidth: 0,
+        }}
+      >
+        {showBack ? (
           <text
             style={{
               fontSize: 13,
@@ -206,38 +179,34 @@ export function Titlebar({
           >
             {title || 'Miru'}
           </text>
-          {issue ? (
-            <text
-              style={{
-                fontSize: 12,
-                fontFamily: FONT_SANS,
-                color: C.tertiary,
-                whiteSpace: 'nowrap',
-                flexShrink: 0,
-              }}
-            >
-              {`#${issue}`}
-            </text>
-          ) : null}
-        </div>
-      ) : (
-        <text
-          style={{
-            fontSize: 13,
-            fontWeight: 500,
-            fontFamily: FONT_SANS,
-            color: C.text,
-            whiteSpace: 'nowrap',
-          }}
-        >
-          Miru
-        </text>
-      )}
-
-      <div
-        style={{ flexGrow: 1, height: '100%' }}
-        onMouseDown={(e: any) => handleTitlebarMouseDown(renderer, e)}
-      />
+        ) : (
+          <text
+            style={{
+              fontSize: 13,
+              fontWeight: 500,
+              fontFamily: FONT_SANS,
+              color: C.text,
+              whiteSpace: 'nowrap',
+            }}
+          >
+            Miru
+          </text>
+        )}
+        {showBack && issue ? (
+          <text
+            style={{
+              fontSize: 12,
+              fontFamily: FONT_SANS,
+              color: C.tertiary,
+              whiteSpace: 'nowrap',
+              flexShrink: 0,
+            }}
+          >
+            {`#${issue}`}
+          </text>
+        ) : null}
+        <div style={{ flexGrow: 1, height: '100%' }} />
+      </DragRegion>
 
       {showPages && onTogglePages ? (
         <IconButton
@@ -250,15 +219,5 @@ export function Titlebar({
       <IconButton icon="settings" testId="settings" onClick={onOpenSettings} />
       <WindowControls />
     </div>
-  )
-}
-
-export function DragSpacer() {
-  const { renderer } = useGpuix()
-  return (
-    <div
-      style={{ flexGrow: 1, height: '100%' }}
-      onMouseDown={(e: any) => handleTitlebarMouseDown(renderer, e)}
-    />
   )
 }
