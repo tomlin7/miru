@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
-import { Button, useGpuix } from '@gpuix/react'
+import { Button } from '@gpuix/react'
 import { Icon, type IconName } from './Icons'
-import { DragSpacer, WindowControls, handleTitlebarMouseDown } from './Titlebar'
+import { DragRegion, WindowControls } from './Titlebar'
 import {
   clampZoom,
   type FitMode,
@@ -180,7 +180,6 @@ export function Settings({
   onBack: () => void
 }) {
   const [section, setSection] = useState('reading')
-  const { renderer } = useGpuix()
   const zoomLabel = `${Math.round(zoom * 100)}%`
 
   return (
@@ -281,10 +280,7 @@ export function Settings({
           })}
         </div>
 
-        <div
-          style={{ flexGrow: 1 }}
-          onMouseDown={(e: any) => handleTitlebarMouseDown(renderer, e)}
-        />
+        <DragRegion testId="titlebar-drag-settings-sidebar" style={{ flexGrow: 1 }} />
       </div>
 
       <div
@@ -306,7 +302,7 @@ export function Settings({
             paddingRight: 8,
           }}
         >
-          <DragSpacer />
+          <DragRegion testId="titlebar-drag-settings" style={{ flexGrow: 1, height: '100%' }} />
           <WindowControls />
         </div>
 

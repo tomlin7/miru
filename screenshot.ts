@@ -49,6 +49,8 @@ const app = await launch({
 
 try {
   await app.getByTestId('reader').waitFor({ timeoutMs: 15_000 })
+  await app.getByTestId('reader-actions').waitFor({ timeoutMs: 10_000 })
+  await app.getByTestId('reader-mode-single').waitFor({ timeoutMs: 5_000 })
   await assertNoSampleButton(app)
   await new Promise((r) => setTimeout(r, 600))
 
@@ -80,11 +82,7 @@ try {
   await app.getByTestId('btn-thumbnails').click()
   await new Promise((r) => setTimeout(r, 250))
 
-  await app.getByTestId('settings').click()
-  await app.getByTestId('settings-mode').waitFor({ timeoutMs: 10_000 })
-  await app.getByTestId('settings-mode').click()
-  await new Promise((r) => setTimeout(r, 200))
-  await app.getByTestId('settings-back').click()
+  await app.getByTestId('reader-mode-webtoon').click()
   await new Promise((r) => setTimeout(r, 500))
 
   await app.screenshot({ path: path.join(outDir, '05_miru_webtoon_mode.png') })
