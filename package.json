@@ -12,7 +12,7 @@
     "screenshot": "bun screenshot.ts"
   },
   "dependencies": {
-    "@gpuix/react": "^0.10.0",
+    "@gpuix/react": "0.11.0",
     "adm-zip": "^0.5.16",
     "node-unrar-js": "^2.0.2",
     "react": "^19.2.4"
