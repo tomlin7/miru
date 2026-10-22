@@ -172,9 +172,11 @@ describeNative('Miru zoom', () => {
     const u = (cx - before.x) / before.width
     const v = (cy - before.y) / before.height
 
-    // The same point of the page, after the zoom.
-    expect(after.x + u * after.width).toBeCloseTo(cx, 0)
-    expect(after.y + v * after.height).toBeCloseTo(cy, 0)
+    // The same point of the page, after the zoom. A pixel of slack, because
+    // the content is laid out in whole pixels; a zoom that ignored the
+    // pointer would be tens of pixels out.
+    expect(Math.abs(after.x + u * after.width - cx)).toBeLessThan(2)
+    expect(Math.abs(after.y + v * after.height - cy)).toBeLessThan(2)
 
     await app.close()
   }, 20_000)
