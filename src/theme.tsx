@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Button } from '@gpuix/react'
 import { Icon, type IconName } from './components/Icons'
+import { useTooltip } from './components/tooltip-layer'
 
 export const C = {
   canvas: '#121215',
@@ -55,8 +56,32 @@ export function IconButton({
   tooltip?: string
 }) {
   const [hovered, setHovered] = useState(false)
+  const { show, hide } = useTooltip()
+  const anchorRef = useRef<{ x: number; y: number; width: number; height: number } | null>(null)
+
+  // The tooltip is drawn in the window's overlay, so the button reports where
+  // it is and asks the layer to show or hide the label.
+  const handleLayout = (event: any) => {
+    if (typeof event?.x !== 'number') return
+    anchorRef.current = {
+      x: event.x,
+      y: event.y,
+      width: event.width ?? 0,
+      height: event.height ?? 0,
+    }
+  }
+
+  useEffect(() => {
+    if (!hovered || !tooltip || active) {
+      hide()
+      return
+    }
+    const anchor = anchorRef.current
+    if (anchor) show({ text: tooltip, ...anchor })
+  }, [hovered, tooltip, active, show, hide])
+
   return (
-    <div style={{ position: 'relative' }}>
+    <div style={{ position: 'relative' }} onLayout={handleLayout}>
       <Button
         testId={testId}
         disabled={dimmed}

@@ -27,6 +27,7 @@ import { Viewer } from './src/components/Viewer'
 import { Thumbnails } from './src/components/Thumbnails'
 import { Library } from './src/components/Library'
 import { Settings } from './src/components/Settings'
+import { TooltipProvider } from './src/components/tooltip-layer'
 import { C, FONT_SANS } from './src/theme'
 
 export function MiruApp() {
@@ -299,167 +300,170 @@ export function MiruApp() {
         position: 'relative',
       }}
     >
-      {settingsOpen ? (
-        <Settings
-          readingMode={readingMode}
-          readingDirection={readingDirection}
-          fitMode={fitMode}
-          zoom={zoom}
-          onChange={(partial) => applyReading(partial, true)}
-          onBack={() => setSettingsOpen(false)}
-        />
-      ) : (
-        <>
-          <Titlebar
-            title={comic?.title}
-            issue={comic?.issue}
-            showBack={comic !== null}
-            onBack={() => setComic(null)}
-            onOpenSettings={() => setSettingsOpen(true)}
-            showPages={comic !== null}
-            pagesOpen={isThumbnailsOpen}
-            onTogglePages={() => setIsThumbnailsOpen((open) => !open)}
-            readingMode={comic ? readingMode : undefined}
-            zoom={comic ? zoom : undefined}
-            onReadingMode={
-              comic ? (mode) => applyReading({ readingMode: mode }, true) : undefined
-            }
-            onZoom={comic ? (next) => applyReading({ zoom: next }, true) : undefined}
+      <TooltipProvider>
+        {settingsOpen ? (
+          <Settings
+            readingMode={readingMode}
+            readingDirection={readingDirection}
+            fitMode={fitMode}
+            zoom={zoom}
+            onChange={(partial) => applyReading(partial, true)}
+            onBack={() => setSettingsOpen(false)}
           />
+        ) : (
+          <>
+            <Titlebar
+              title={comic?.title}
+              issue={comic?.issue}
+              showBack={comic !== null}
+              onBack={() => setComic(null)}
+              onOpenSettings={() => setSettingsOpen(true)}
+              showPages={comic !== null}
+              pagesOpen={isThumbnailsOpen}
+              onTogglePages={() => setIsThumbnailsOpen((open) => !open)}
+              readingMode={comic ? readingMode : undefined}
+              zoom={comic ? zoom : undefined}
+              onReadingMode={
+                comic ? (mode) => applyReading({ readingMode: mode }, true) : undefined
+              }
+              onZoom={comic ? (next) => applyReading({ zoom: next }, true) : undefined}
+            />
 
-          {comic ? (
-            <div
-              testId="reader"
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                flexGrow: 1,
-                position: 'relative',
-                overflow: 'hidden',
-              }}
-            >
+            {comic ? (
               <div
+                testId="reader"
                 style={{
                   display: 'flex',
-                  flexDirection: 'row',
+                  flexDirection: 'column',
                   flexGrow: 1,
-                  overflow: 'hidden',
                   position: 'relative',
+                  overflow: 'hidden',
                 }}
               >
-                <Viewer
-                  pages={comic.pages}
-                  currentPage={currentPage}
-                  readingMode={readingMode}
-                  readingDirection={readingDirection}
-                  fitMode={fitMode}
-                  zoom={zoom}
-                  onPageClick={handlePageClick}
-                />
-                <Thumbnails
-                  open={isThumbnailsOpen}
-                  width={thumbnailsWidth}
-                  isResizing={resizing === 'thumbnails'}
-                  onStartResize={(e: any) => {
-                    if (e.button === 0) {
-                      resizeOrigin.current = {
-                        startX: e.x ?? 0,
-                        startWidth: thumbnailsWidth,
-                      }
-                      setResizing('thumbnails')
-                    }
-                  }}
-                  pages={comic.pages}
-                  currentPage={currentPage}
-                  onSelectPage={handleSelectPage}
-                  onClose={() => setIsThumbnailsOpen(false)}
-                />
-              </div>
-
-              {readingMode !== 'webtoon' && (
-                <PageRail
-                  currentPage={currentPage}
-                  pageCount={comic.pageCount}
-                  onPrevPage={handlePrevPage}
-                  onNextPage={handleNextPage}
-                />
-              )}
-
-              {resizing !== null && (
                 <div
                   style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    width: '100%',
-                    height: '100%',
-                    cursor: 'col-resize',
-                    backgroundColor: '#00000001',
+                    display: 'flex',
+                    flexDirection: 'row',
+                    flexGrow: 1,
+                    overflow: 'hidden',
+                    position: 'relative',
                   }}
-                  onMouseMove={(e: any) => {
-                    const currentX = e.x ?? 0
-                    if (resizing === 'thumbnails') {
-                      const delta = resizeOrigin.current.startX - currentX
-                      const newWidth = Math.max(
-                        200,
-                        Math.min(460, resizeOrigin.current.startWidth + delta)
-                      )
-                      setThumbnailsWidth(newWidth)
-                    }
-                  }}
-                  onMouseUp={() => setResizing(null)}
-                />
-              )}
-            </div>
-          ) : (
-            <Library
-              history={history}
-              onOpenComic={handleOpenComic}
-              onOpenFile={handleOpenFileDialog}
-              onRemoveHistory={handleRemoveHistory}
-            />
-          )}
-        </>
-      )}
+                >
+                  <Viewer
+                    pages={comic.pages}
+                    currentPage={currentPage}
+                    readingMode={readingMode}
+                    readingDirection={readingDirection}
+                    fitMode={fitMode}
+                    zoom={zoom}
+                    onZoom={(next) => applyReading({ zoom: next }, true)}
+                    onPageClick={handlePageClick}
+                  />
+                  <Thumbnails
+                    open={isThumbnailsOpen}
+                    width={thumbnailsWidth}
+                    isResizing={resizing === 'thumbnails'}
+                    onStartResize={(e: any) => {
+                      if (e.button === 0) {
+                        resizeOrigin.current = {
+                          startX: e.x ?? 0,
+                          startWidth: thumbnailsWidth,
+                        }
+                        setResizing('thumbnails')
+                      }
+                    }}
+                    pages={comic.pages}
+                    currentPage={currentPage}
+                    onSelectPage={handleSelectPage}
+                    onClose={() => setIsThumbnailsOpen(false)}
+                  />
+                </div>
 
-      {errorMessage && (
-        <div
-          style={{
-            position: 'absolute',
-            bottom: 28,
-            left: 0,
-            right: 0,
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'center',
-          }}
-          onMouseDown={() => setErrorMessage(null)}
-        >
+                {readingMode !== 'webtoon' && (
+                  <PageRail
+                    currentPage={currentPage}
+                    pageCount={comic.pageCount}
+                    onPrevPage={handlePrevPage}
+                    onNextPage={handleNextPage}
+                  />
+                )}
+
+                {resizing !== null && (
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '100%',
+                      height: '100%',
+                      cursor: 'col-resize',
+                      backgroundColor: '#00000001',
+                    }}
+                    onMouseMove={(e: any) => {
+                      const currentX = e.x ?? 0
+                      if (resizing === 'thumbnails') {
+                        const delta = resizeOrigin.current.startX - currentX
+                        const newWidth = Math.max(
+                          200,
+                          Math.min(460, resizeOrigin.current.startWidth + delta)
+                        )
+                        setThumbnailsWidth(newWidth)
+                      }
+                    }}
+                    onMouseUp={() => setResizing(null)}
+                  />
+                )}
+              </div>
+            ) : (
+              <Library
+                history={history}
+                onOpenComic={handleOpenComic}
+                onOpenFile={handleOpenFileDialog}
+                onRemoveHistory={handleRemoveHistory}
+              />
+            )}
+          </>
+        )}
+
+        {errorMessage && (
           <div
             style={{
-              backgroundColor: C.raised,
-              borderWidth: 1,
-              borderColor: C.border,
-              borderRadius: 8,
-              paddingLeft: 12,
-              paddingRight: 12,
-              paddingTop: 8,
-              paddingBottom: 8,
+              position: 'absolute',
+              bottom: 28,
+              left: 0,
+              right: 0,
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'center',
             }}
+            onMouseDown={() => setErrorMessage(null)}
           >
-            <text
+            <div
               style={{
-                fontSize: 12,
-                fontFamily: FONT_SANS,
-                color: C.error,
-                whiteSpace: 'nowrap',
+                backgroundColor: C.raised,
+                borderWidth: 1,
+                borderColor: C.border,
+                borderRadius: 8,
+                paddingLeft: 12,
+                paddingRight: 12,
+                paddingTop: 8,
+                paddingBottom: 8,
               }}
             >
-              {errorMessage}
-            </text>
+              <text
+                style={{
+                  fontSize: 12,
+                  fontFamily: FONT_SANS,
+                  color: C.error,
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {errorMessage}
+              </text>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </TooltipProvider>
     </div>
   )
 }
