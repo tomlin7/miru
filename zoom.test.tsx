@@ -20,6 +20,14 @@ import { createSampleMangaCbz } from './src/core/sample'
 
 const describeNative = hasNativeTestRenderer ? describe : describe.skip
 
+/**
+ * GPUIX reports wheel deltas the way GPUI does, which is the opposite of the
+ * DOM: a positive `deltaY` scrolls up, a negative one scrolls down. These are
+ * named so a test cannot quietly ask for the wrong direction.
+ */
+const WHEEL_UP = 120
+const WHEEL_DOWN = -WHEEL_UP
+
 /** The reader measures its own page, so the size settles a frame after mount. */
 const settle = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
@@ -106,7 +114,7 @@ describeNative('Miru zoom', () => {
     const cx = before.x + before.width / 2
     const cy = before.y + before.height / 2
 
-    await app.mouse.wheel({ x: cx, y: cy }, 0, -120, { modifiers: 'ctrl' })
+    await app.mouse.wheel({ x: cx, y: cy }, 0, WHEEL_UP, { modifiers: 'ctrl' })
     await settle(500)
 
     const after = await contentBounds(app)
@@ -126,7 +134,7 @@ describeNative('Miru zoom', () => {
     const cx = before.x + before.width / 2
     const cy = before.y + before.height / 2
 
-    await app.mouse.wheel({ x: cx, y: cy }, 0, -120, { modifiers: 'ctrl' })
+    await app.mouse.wheel({ x: cx, y: cy }, 0, WHEEL_UP, { modifiers: 'ctrl' })
     await settle(500)
 
     const after = await contentBounds(app)
@@ -146,7 +154,7 @@ describeNative('Miru zoom', () => {
     const cx = before.x + before.width / 2
     const cy = before.y + before.height / 2
 
-    await app.mouse.wheel({ x: cx, y: cy }, 0, -120, { modifiers: 'ctrl' })
+    await app.mouse.wheel({ x: cx, y: cy }, 0, WHEEL_UP, { modifiers: 'ctrl' })
     await settle(500)
 
     const after = await contentBounds(app)
@@ -164,7 +172,7 @@ describeNative('Miru zoom', () => {
     const cx = before.x + before.width * 0.25
     const cy = before.y + before.height * 0.3
 
-    await app.mouse.wheel({ x: cx, y: cy }, 0, -120, { modifiers: 'ctrl' })
+    await app.mouse.wheel({ x: cx, y: cy }, 0, WHEEL_UP, { modifiers: 'ctrl' })
     await settle(500)
 
     const after = await contentBounds(app)
@@ -189,7 +197,7 @@ describeNative('Miru zoom', () => {
     const cy = before.y + before.height / 2
 
     // Scrolling down moves the page up.
-    await app.mouse.wheel({ x: cx, y: cy }, 0, 120)
+    await app.mouse.wheel({ x: cx, y: cy }, 0, WHEEL_DOWN)
     await settle(500)
 
     const after = await contentBounds(app)
@@ -197,6 +205,28 @@ describeNative('Miru zoom', () => {
     expect(after.width).toBe(before.width)
     expect(after.y).toBeLessThan(before.y)
     expect(await zoomLabel(renderer)).toBe('100%')
+
+    await app.close()
+  }, 20_000)
+
+  it('zooms out when the wheel is rolled towards the reader', async () => {
+    const { app } = await openReader()
+
+    const before = await contentBounds(app)
+    const cx = before.x + before.width / 2
+    const cy = before.y + before.height / 2
+
+    // Rolling the wheel down zooms out, as in any image viewer. The reader
+    // used to do the opposite: the wheel's sign was read as the DOM's.
+    await app.mouse.wheel({ x: cx, y: cy }, 0, WHEEL_DOWN, { modifiers: 'ctrl' })
+    await settle(500)
+    const out = await contentBounds(app)
+    expect(out.width).toBeLessThan(before.width)
+
+    // And rolling it the other way zooms back in.
+    await app.mouse.wheel({ x: cx, y: cy }, 0, WHEEL_UP, { modifiers: 'ctrl' })
+    await settle(500)
+    expect((await contentBounds(app)).width).toBeGreaterThan(out.width)
 
     await app.close()
   }, 20_000)

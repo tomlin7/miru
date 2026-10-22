@@ -96,8 +96,14 @@ export function Viewer({
    * The wheel: ctrl zooms around the pointer, everything else pans.
    */
   const handleWheel = (event: any) => {
-    const deltaX = typeof event?.deltaX === 'number' ? event.deltaX : 0
-    const deltaY = typeof event?.deltaY === 'number' ? event.deltaY : 0
+    // GPUIX reports the wheel the way GPUI does: negative `deltaY` scrolls
+    // down and negative `deltaX` pans right. That is the opposite of the DOM
+    // convention, and the rest of this handler is written in DOM terms, so
+    // the sign is turned round once, here. Without this a wheel rolled away
+    // from the reader zooms in instead of out, and the page runs the wrong
+    // way.
+    const deltaX = -(typeof event?.deltaX === 'number' ? event.deltaX : 0)
+    const deltaY = -(typeof event?.deltaY === 'number' ? event.deltaY : 0)
     if (deltaX === 0 && deltaY === 0) return
 
     if (!event?.modifiers?.ctrl) {
